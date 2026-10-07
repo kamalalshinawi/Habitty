@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { ActivityIndicator, StatusBar, StyleSheet, View } from 'react-native';
 import {
   useFonts,
@@ -12,6 +12,45 @@ import {
 import { Colors } from './src/constants/colors';
 import RootNavigator from './src/navigation/RootNavigator';
 import { HabitProvider } from './src/features/habits/context/HabitContext';
+import { ThemeProvider, useTheme } from './src/context/ThemeContext';
+
+function MainApp() {
+  const { colors, isDark } = useTheme();
+
+  const navigationTheme = isDark
+    ? {
+        ...DarkTheme,
+        colors: {
+          ...DarkTheme.colors,
+          background: colors.background,
+          card: colors.card,
+          text: colors.text,
+          border: colors.border,
+          primary: colors.tint,
+        },
+      }
+    : {
+        ...DefaultTheme,
+        colors: {
+          ...DefaultTheme.colors,
+          background: colors.background,
+          card: colors.card,
+          text: colors.text,
+          border: colors.border,
+          primary: colors.tint,
+        },
+      };
+
+  return (
+    <NavigationContainer theme={navigationTheme}>
+      <StatusBar
+        barStyle={isDark ? 'light-content' : 'dark-content'}
+        backgroundColor={colors.background}
+      />
+      <RootNavigator />
+    </NavigationContainer>
+  );
+}
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -31,12 +70,11 @@ export default function App() {
   }
 
   return (
-    <HabitProvider>
-      <NavigationContainer>
-        <StatusBar barStyle="dark-content" backgroundColor={Colors.background} />
-        <RootNavigator />
-      </NavigationContainer>
-    </HabitProvider>
+    <ThemeProvider>
+      <HabitProvider>
+        <MainApp />
+      </HabitProvider>
+    </ThemeProvider>
   );
 }
 
