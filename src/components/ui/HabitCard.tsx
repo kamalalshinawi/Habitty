@@ -23,6 +23,11 @@ export default function HabitCard({ habit, status, streak, onComplete, onPress }
       onPress={onPress}
     >
       <View style={styles.content}>
+        {habit.icon ? (
+          <View style={[styles.iconCircle, { backgroundColor: `${color}18` }]}>
+            <FontAwesome name={habit.icon as any} size={18} color={color} />
+          </View>
+        ) : null}
         <View style={styles.textContainer}>
           <Text style={styles.title}>{habit.title}</Text>
           {habit.description ? (
@@ -72,6 +77,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: 16,
+  },
+  iconCircle: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
   },
   textContainer: {
     flex: 1,

@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   Alert,
   SafeAreaView,
@@ -95,7 +96,7 @@ export default function HabitDetailScreen() {
   const handleDeletePress = () => {
     Alert.alert(
       'Delete Habit',
-      `Are you sure you want to delete "${habit.title}"? This will remove all associated completion records.`,
+      `Are you sure you want to delete "${habit.title}"?`,
       [
         { text: 'Cancel', style: 'cancel' },
         {
@@ -145,7 +146,7 @@ export default function HabitDetailScreen() {
         <View style={[styles.heroCard, { borderTopColor: habitColor }]}>
           <View style={styles.heroTop}>
             <View style={[styles.heroIconBox, { backgroundColor: `${habitColor}18` }]}>
-              <FontAwesome name="check-circle" size={26} color={habitColor} />
+              <FontAwesome name={(habit.icon as any) ?? 'check-circle'} size={26} color={habitColor} />
             </View>
             <View style={styles.heroTitles}>
               <Text style={styles.habitTitle}>{habit.title}</Text>
