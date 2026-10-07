@@ -642,6 +642,11 @@
     "@eslint/core" "^0.17.0"
     levn "^0.4.1"
 
+"@expo-google-fonts/nunito@^0.4.2":
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/@expo-google-fonts/nunito/-/nunito-0.4.2.tgz#9ce15e924dc7fc29a2257afb7f78a3f0e7d0d39f"
+  integrity sha512-1KCWphw/I2ugqfs9iRHUCkPTnomNgGPtF4AvqVquoEKxr0EL+mcLNLgeixsslbaSFevRR6/KJAE3sc8g0VaY0Q==
+
 "@expo/cli@^57.0.28":
   version "57.0.28"
   resolved "https://registry.yarnpkg.com/@expo/cli/-/cli-57.0.28.tgz#60b6ac96fda3261eadaaabbc04d14ba8f254bb40"
@@ -2836,7 +2841,7 @@ expo-file-system@~57.0.7:
   resolved "https://registry.yarnpkg.com/expo-file-system/-/expo-file-system-57.0.7.tgz#03c4587c0027f65f7e04d88796aefcfe74b03cae"
   integrity sha512-1vkZRadOsIputFDBcclqBa1pO3iXOO6iIsdqJipQWw4V5TSnWgmRTuOF7ro8IzrVue+PHbum++KCG3Tawem4cg==
 
-expo-font@~57.0.4:
+expo-font@^57.0.4, expo-font@~57.0.4:
   version "57.0.4"
   resolved "https://registry.yarnpkg.com/expo-font/-/expo-font-57.0.4.tgz#ccd67dd2ee3168510a1a2453a5a8b8fd7f8a5fe4"
   integrity sha512-7WOMC2oA6xCfOm8bbofqWn2bIqyWFm7YLEnpc/gA1MJH0Ll0TfT/3+CqRkoW2eNRWMS8sxrz5WukUmSvmNquHA==
