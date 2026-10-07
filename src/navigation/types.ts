@@ -10,6 +10,7 @@ export type TabParamList = {
 export type RootStackParamList = {
   Main: NavigatorScreenParams<TabParamList>;
   HabitDetail: { habitId: string };
+  AddHabit: undefined;
 };
 
 export type RootTabParamList = TabParamList;
