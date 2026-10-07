@@ -7,11 +7,13 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
-import { Colors } from '../constants/colors';
+import { useTheme } from '../context/ThemeContext';
 import { useHabits } from '../features/habits/hooks/useHabits';
 import HabitMonthlyCalendar from '../components/ui/HabitMonthlyCalendar';
+import { Fonts } from '../constants/fonts';
 
 export default function CalendarScreen() {
+  const { colors } = useTheme();
   const { habits, habitDays, toggleDay } = useHabits();
   const [selectedHabitId, setSelectedHabitId] = useState<string>(
     habits[0]?.id ?? '1'
@@ -20,11 +22,13 @@ export default function CalendarScreen() {
   const selectedHabit = habits.find((h) => h.id === selectedHabitId) ?? habits[0];
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={[styles.safe, { backgroundColor: colors.background }]}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
-          <Text style={styles.title}>Calendar Overview</Text>
-          <Text style={styles.subtitle}>Track your habit completions over time</Text>
+          <Text style={[styles.title, { color: colors.text }]}>Calendar Overview</Text>
+          <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
+            Track your habit completions over time
+          </Text>
         </View>
 
         {/* Habit Selector Tabs */}
@@ -35,14 +39,15 @@ export default function CalendarScreen() {
         >
           {habits.map((habit) => {
             const isSelected = habit.id === selectedHabitId;
-            const habitColor = habit.color ?? Colors.tint;
+            const habitColor = habit.color ?? colors.tint;
 
             return (
               <TouchableOpacity
                 key={habit.id}
                 style={[
                   styles.habitTab,
-                  isSelected && [styles.habitTabActive, { borderColor: habitColor }],
+                  { backgroundColor: colors.card, borderColor: colors.border },
+                  isSelected && [styles.habitTabActive, { borderColor: habitColor, backgroundColor: colors.background }],
                 ]}
                 onPress={() => setSelectedHabitId(habit.id)}
                 activeOpacity={0.7}
@@ -51,6 +56,7 @@ export default function CalendarScreen() {
                 <Text
                   style={[
                     styles.tabText,
+                    { color: colors.textSecondary },
                     isSelected && [styles.tabTextActive, { color: habitColor }],
                   ]}
                 >
@@ -78,7 +84,6 @@ export default function CalendarScreen() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: Colors.background,
   },
   header: {
     paddingHorizontal: 16,
@@ -87,12 +92,11 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: '700',
-    color: Colors.text,
+    fontFamily: Fonts.extraBold,
   },
   subtitle: {
     fontSize: 13,
-    color: Colors.textSecondary,
+    fontFamily: Fonts.medium,
     marginTop: 4,
   },
   selectorContainer: {
@@ -106,13 +110,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: Colors.card,
     borderWidth: 1.5,
-    borderColor: Colors.border,
     gap: 8,
   },
   habitTabActive: {
-    backgroundColor: Colors.background,
+    borderWidth: 1.5,
   },
   tabDot: {
     width: 8,
@@ -121,10 +123,9 @@ const styles = StyleSheet.create({
   },
   tabText: {
     fontSize: 13,
-    fontWeight: '600',
-    color: Colors.textSecondary,
+    fontFamily: Fonts.semiBold,
   },
   tabTextActive: {
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
   },
 });

@@ -13,7 +13,8 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RouteProp } from '@react-navigation/native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 
-import { Colors } from '../constants/colors';
+import { useTheme } from '../context/ThemeContext';
+import { Fonts } from '../constants/fonts';
 import type { RootStackParamList } from '../navigation/types';
 import { useHabitDetail } from '../features/habits/hooks/useHabitDetail';
 import HabitStats from '../components/ui/HabitStats';
@@ -26,6 +27,7 @@ export default function HabitDetailScreen() {
   const navigation = useNavigation<DetailNavigationProp>();
   const route = useRoute<DetailRouteProp>();
   const { habitId } = route.params;
+  const { colors, isDark } = useTheme();
 
   const {
     habit,
@@ -43,11 +45,11 @@ export default function HabitDetailScreen() {
 
   if (!habit) {
     return (
-      <SafeAreaView style={styles.safe}>
+      <SafeAreaView style={[styles.safe, { backgroundColor: colors.background }]}>
         <View style={styles.notFoundContainer}>
-          <Text style={styles.notFoundText}>Habit not found</Text>
+          <Text style={[styles.notFoundText, { color: colors.textSecondary }]}>Habit not found</Text>
           <TouchableOpacity
-            style={styles.backHomeButton}
+            style={[styles.backHomeButton, { backgroundColor: colors.tint }]}
             onPress={() => navigation.goBack()}
             activeOpacity={0.7}
           >
@@ -58,7 +60,7 @@ export default function HabitDetailScreen() {
     );
   }
 
-  const habitColor = habit.color ?? Colors.tint;
+  const habitColor = habit.color ?? colors.tint;
 
   const getMotivationMessage = () => {
     if (streak >= 14) {
@@ -112,29 +114,29 @@ export default function HabitDetailScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={[styles.safe, { backgroundColor: colors.background }]}>
       {/* Top Navigation Bar */}
-      <View style={styles.navBar}>
+      <View style={[styles.navBar, { borderBottomColor: colors.border }]}>
         <TouchableOpacity
-          style={styles.navBarButton}
+          style={[styles.navBarButton, { backgroundColor: colors.card, borderColor: colors.border }]}
           onPress={() => navigation.goBack()}
           activeOpacity={0.7}
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
-          <FontAwesome name="chevron-left" size={16} color={Colors.text} />
+          <FontAwesome name="chevron-left" size={15} color={colors.text} />
         </TouchableOpacity>
 
-        <Text style={styles.navBarTitle} numberOfLines={1}>
+        <Text style={[styles.navBarTitle, { color: colors.text }]} numberOfLines={1}>
           Habit Details
         </Text>
 
         <TouchableOpacity
-          style={styles.navBarDeleteButton}
+          style={[styles.navBarDeleteButton, { backgroundColor: colors.card, borderColor: colors.border }]}
           onPress={handleDeletePress}
           activeOpacity={0.7}
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
-          <FontAwesome name="trash-o" size={16} color={Colors.danger} />
+          <FontAwesome name="trash-o" size={16} color={colors.danger} />
         </TouchableOpacity>
       </View>
 
@@ -143,15 +145,30 @@ export default function HabitDetailScreen() {
         contentContainerStyle={styles.scrollContent}
       >
         {/* Hero Card */}
-        <View style={[styles.heroCard, { borderTopColor: habitColor }]}>
+        <View
+          style={[
+            styles.heroCard,
+            {
+              backgroundColor: colors.card,
+              borderColor: colors.border,
+              borderTopColor: habitColor,
+            },
+          ]}
+        >
           <View style={styles.heroTop}>
             <View style={[styles.heroIconBox, { backgroundColor: `${habitColor}18` }]}>
-              <FontAwesome name={(habit.icon as any) ?? 'check-circle'} size={26} color={habitColor} />
+              <FontAwesome
+                name={(habit.icon as any) ?? 'check-circle'}
+                size={24}
+                color={habitColor}
+              />
             </View>
             <View style={styles.heroTitles}>
-              <Text style={styles.habitTitle}>{habit.title}</Text>
+              <Text style={[styles.habitTitle, { color: colors.text }]}>{habit.title}</Text>
               {habit.description ? (
-                <Text style={styles.habitSubtitle}>{habit.description}</Text>
+                <Text style={[styles.habitSubtitle, { color: colors.textSecondary }]}>
+                  {habit.description}
+                </Text>
               ) : null}
             </View>
           </View>
@@ -162,7 +179,7 @@ export default function HabitDetailScreen() {
               styles.todayActionButton,
               isTodayDone
                 ? [styles.todayActionDone, { backgroundColor: habitColor }]
-                : styles.todayActionPending,
+                : [styles.todayActionPending, { backgroundColor: colors.background, borderColor: colors.border }],
             ]}
             onPress={toggleToday}
             activeOpacity={0.8}
@@ -170,12 +187,12 @@ export default function HabitDetailScreen() {
             <FontAwesome
               name={isTodayDone ? 'check-circle' : 'circle-o'}
               size={18}
-              color={isTodayDone ? '#ffffff' : Colors.text}
+              color={isTodayDone ? '#ffffff' : colors.text}
             />
             <Text
               style={[
                 styles.todayActionText,
-                isTodayDone && styles.todayActionTextDone,
+                { color: isTodayDone ? '#ffffff' : colors.text },
               ]}
             >
               {isTodayDone ? 'Completed Today ✓ (Tap to undo)' : 'Mark as Done for Today'}
@@ -185,8 +202,8 @@ export default function HabitDetailScreen() {
 
         {/* Weekly Trend Snapshot */}
         <View style={styles.sectionContainer}>
-          <Text style={styles.sectionTitle}>This Week</Text>
-          <View style={styles.weeklyCard}>
+          <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>THIS WEEK</Text>
+          <View style={[styles.weeklyCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
             <View style={styles.weeklyRow}>
               {weeklyTrend.map((day) => {
                 const isDone = day.isDone;
@@ -204,7 +221,8 @@ export default function HabitDetailScreen() {
                     <Text
                       style={[
                         styles.weekDayLabel,
-                        isCurToday && { color: habitColor, fontWeight: '700' },
+                        { color: colors.textSecondary },
+                        isCurToday && { color: habitColor, fontFamily: Fonts.bold },
                       ]}
                     >
                       {day.dayName}
@@ -213,7 +231,8 @@ export default function HabitDetailScreen() {
                     <View
                       style={[
                         styles.weekDayCircle,
-                        isDone && [styles.weekDayCircleDone, { backgroundColor: habitColor }],
+                        { backgroundColor: colors.background, borderColor: colors.border },
+                        isDone && [styles.weekDayCircleDone, { backgroundColor: habitColor, borderColor: habitColor }],
                         isCurToday && !isDone && [styles.weekDayCircleToday, { borderColor: habitColor }],
                         isFuture && styles.weekDayCircleFuture,
                       ]}
@@ -224,8 +243,9 @@ export default function HabitDetailScreen() {
                         <Text
                           style={[
                             styles.weekDayNumber,
-                            isCurToday && { color: habitColor, fontWeight: '700' },
-                            isFuture && styles.weekDayNumberFuture,
+                            { color: colors.text },
+                            isCurToday && { color: habitColor, fontFamily: Fonts.bold },
+                            isFuture && { color: colors.textSecondary },
                           ]}
                         >
                           {day.dayNumber}
@@ -241,7 +261,7 @@ export default function HabitDetailScreen() {
 
         {/* Habit Metrics & Streaks */}
         <View style={styles.sectionContainer}>
-          <Text style={styles.sectionTitle}>Performance</Text>
+          <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>PERFORMANCE</Text>
           <HabitStats
             currentStreak={streak}
             longestStreak={longestStreak}
@@ -253,7 +273,7 @@ export default function HabitDetailScreen() {
 
         {/* Interactive Monthly Calendar */}
         <View style={styles.sectionContainer}>
-          <Text style={styles.sectionTitle}>Completion Calendar</Text>
+          <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>COMPLETION CALENDAR</Text>
           <HabitMonthlyCalendar
             habitId={habit.id}
             habitDays={habitDays}
@@ -264,31 +284,31 @@ export default function HabitDetailScreen() {
 
         {/* Motivation & Consistency Insights */}
         <View style={styles.sectionContainer}>
-          <Text style={styles.sectionTitle}>Insights</Text>
-          <View style={styles.insightsCard}>
+          <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>INSIGHTS</Text>
+          <View style={[styles.insightsCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
             <View style={styles.insightHeader}>
-              <View style={[styles.badgePill, { backgroundColor: `${habitColor}20` }]}>
+              <View style={[styles.badgePill, { backgroundColor: `${habitColor}22` }]}>
                 <Text style={[styles.badgeText, { color: habitColor }]}>
                   {motivation.badge}
                 </Text>
               </View>
             </View>
-            <Text style={styles.insightMessage}>{motivation.message}</Text>
+            <Text style={[styles.insightMessage, { color: colors.text }]}>{motivation.message}</Text>
 
-            <View style={styles.insightDivider} />
+            <View style={[styles.insightDivider, { backgroundColor: colors.border }]} />
 
             <View style={styles.infoRow}>
               <View style={styles.infoItem}>
-                <Text style={styles.infoLabel}>Frequency</Text>
-                <Text style={styles.infoValue}>Daily</Text>
+                <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>Frequency</Text>
+                <Text style={[styles.infoValue, { color: colors.text }]}>Daily</Text>
               </View>
               <View style={styles.infoItem}>
-                <Text style={styles.infoLabel}>Completion Target</Text>
-                <Text style={styles.infoValue}>100%</Text>
+                <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>Completion Target</Text>
+                <Text style={[styles.infoValue, { color: colors.text }]}>100%</Text>
               </View>
               <View style={styles.infoItem}>
-                <Text style={styles.infoLabel}>Reminders</Text>
-                <Text style={styles.infoValue}>Active</Text>
+                <Text style={[styles.infoLabel, { color: colors.textSecondary }]}>Reminders</Text>
+                <Text style={[styles.infoValue, { color: colors.text }]}>Active</Text>
               </View>
             </View>
           </View>
@@ -303,7 +323,6 @@ export default function HabitDetailScreen() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: Colors.background,
   },
   navBar: {
     flexDirection: 'row',
@@ -312,45 +331,37 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
   },
   navBarButton: {
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: Colors.card,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: Colors.border,
   },
   navBarTitle: {
     fontSize: 16,
-    fontWeight: '700',
-    color: Colors.text,
+    fontFamily: Fonts.bold,
   },
   navBarDeleteButton: {
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: Colors.card,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: Colors.border,
   },
   scrollContent: {
     paddingBottom: 24,
   },
   heroCard: {
-    backgroundColor: Colors.card,
     borderRadius: 18,
     marginHorizontal: 16,
     marginTop: 16,
     marginBottom: 8,
     padding: 18,
     borderWidth: 1,
-    borderColor: Colors.border,
     borderTopWidth: 4,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -365,9 +376,9 @@ const styles = StyleSheet.create({
     gap: 14,
   },
   heroIconBox: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -376,14 +387,12 @@ const styles = StyleSheet.create({
   },
   habitTitle: {
     fontSize: 22,
-    fontWeight: '700',
-    color: Colors.text,
-    marginBottom: 4,
+    fontFamily: Fonts.extraBold,
+    marginBottom: 2,
   },
   habitSubtitle: {
     fontSize: 14,
-    color: Colors.textSecondary,
-    fontWeight: '500',
+    fontFamily: Fonts.medium,
   },
   todayActionButton: {
     flexDirection: 'row',
@@ -394,9 +403,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   todayActionPending: {
-    backgroundColor: Colors.background,
     borderWidth: 1.5,
-    borderColor: Colors.border,
   },
   todayActionDone: {
     shadowColor: '#000',
@@ -407,32 +414,24 @@ const styles = StyleSheet.create({
   },
   todayActionText: {
     fontSize: 14,
-    fontWeight: '600',
-    color: Colors.text,
-  },
-  todayActionTextDone: {
-    color: '#ffffff',
+    fontFamily: Fonts.bold,
   },
   sectionContainer: {
     marginTop: 14,
   },
   sectionTitle: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: Colors.text,
-    marginHorizontal: 18,
+    fontSize: 12,
+    fontFamily: Fonts.bold,
+    marginHorizontal: 20,
     marginBottom: 8,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
+    letterSpacing: 0.6,
   },
   weeklyCard: {
-    backgroundColor: Colors.card,
     borderRadius: 18,
     marginHorizontal: 16,
     paddingVertical: 14,
     paddingHorizontal: 8,
     borderWidth: 1,
-    borderColor: Colors.border,
   },
   weeklyRow: {
     flexDirection: 'row',
@@ -446,8 +445,7 @@ const styles = StyleSheet.create({
   },
   weekDayLabel: {
     fontSize: 11,
-    fontWeight: '600',
-    color: Colors.textSecondary,
+    fontFamily: Fonts.semiBold,
   },
   weekDayCircle: {
     width: 32,
@@ -455,9 +453,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.background,
     borderWidth: 1,
-    borderColor: Colors.border,
   },
   weekDayCircleDone: {
     borderWidth: 0,
@@ -470,19 +466,13 @@ const styles = StyleSheet.create({
   },
   weekDayNumber: {
     fontSize: 12,
-    fontWeight: '500',
-    color: Colors.text,
-  },
-  weekDayNumberFuture: {
-    color: Colors.textSecondary,
+    fontFamily: Fonts.medium,
   },
   insightsCard: {
-    backgroundColor: Colors.card,
     borderRadius: 18,
     marginHorizontal: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: Colors.border,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.04,
@@ -500,17 +490,16 @@ const styles = StyleSheet.create({
   },
   badgeText: {
     fontSize: 12,
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
   },
   insightMessage: {
     fontSize: 13,
-    color: Colors.text,
+    fontFamily: Fonts.medium,
     lineHeight: 18,
     marginBottom: 12,
   },
   insightDivider: {
     height: 1,
-    backgroundColor: Colors.border,
     marginVertical: 10,
   },
   infoRow: {
@@ -522,14 +511,12 @@ const styles = StyleSheet.create({
   },
   infoLabel: {
     fontSize: 11,
-    color: Colors.textSecondary,
-    fontWeight: '500',
+    fontFamily: Fonts.medium,
     marginBottom: 2,
   },
   infoValue: {
     fontSize: 13,
-    fontWeight: '600',
-    color: Colors.text,
+    fontFamily: Fonts.bold,
   },
   notFoundContainer: {
     flex: 1,
@@ -539,19 +526,17 @@ const styles = StyleSheet.create({
   },
   notFoundText: {
     fontSize: 18,
-    fontWeight: '600',
-    color: Colors.textSecondary,
+    fontFamily: Fonts.semiBold,
     marginBottom: 16,
   },
   backHomeButton: {
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 8,
-    backgroundColor: Colors.tint,
   },
   backHomeButtonText: {
     color: '#ffffff',
-    fontWeight: '600',
+    fontFamily: Fonts.bold,
     fontSize: 14,
   },
 });

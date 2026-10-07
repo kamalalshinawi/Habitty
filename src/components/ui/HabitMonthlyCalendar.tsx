@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Colors } from '../../constants/colors';
 import { MONTH_NAMES, formatDateKey, getCalendarGridDays } from '../../utils/dateHelpers';
 import type { HabitStatus } from '../../types/habit';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { useTheme } from '../../context/ThemeContext';
+import { Fonts } from '../../constants/fonts';
 
 type Props = {
   habitId: string;
@@ -17,9 +18,12 @@ const WEEKDAY_HEADERS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 export default function HabitMonthlyCalendar({
   habitId,
   habitDays,
-  habitColor = Colors.tint,
+  habitColor,
   onDayPress,
 }: Props) {
+  const { colors, isDark } = useTheme();
+  const activeHabitColor = habitColor ?? colors.tint;
+
   const today = new Date();
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
   const [currentMonth, setCurrentMonth] = useState(today.getMonth());
@@ -63,7 +67,6 @@ export default function HabitMonthlyCalendar({
     }
   }
 
-  // Calculate days passed up to today if viewing current month, or all days if viewing past month
   const countableDays = isCurrentViewingMonth
     ? today.getDate()
     : currentYear < today.getFullYear() || (currentYear === today.getFullYear() && currentMonth < today.getMonth())
@@ -73,14 +76,14 @@ export default function HabitMonthlyCalendar({
   const monthlyRate = countableDays > 0 ? Math.round((completedInMonth / countableDays) * 100) : 0;
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.card, borderColor: colors.border }]}>
       {/* Month Navigation Header */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <Text style={styles.monthTitle}>
+          <Text style={[styles.monthTitle, { color: colors.text }]}>
             {MONTH_NAMES[currentMonth]} {currentYear}
           </Text>
-          <Text style={styles.monthSubtitle}>
+          <Text style={[styles.monthSubtitle, { color: colors.textSecondary }]}>
             {completedInMonth} of {countableDays} days completed ({monthlyRate}%)
           </Text>
         </View>
@@ -88,38 +91,38 @@ export default function HabitMonthlyCalendar({
         <View style={styles.navButtons}>
           {!isCurrentViewingMonth && (
             <TouchableOpacity
-              style={styles.todayButton}
+              style={[styles.todayButton, { backgroundColor: colors.background, borderColor: colors.border }]}
               onPress={handleResetToToday}
               activeOpacity={0.7}
             >
-              <Text style={styles.todayButtonText}>Today</Text>
+              <Text style={[styles.todayButtonText, { color: colors.text }]}>Today</Text>
             </TouchableOpacity>
           )}
 
           <TouchableOpacity
-            style={styles.navButton}
+            style={[styles.navButton, { backgroundColor: colors.background, borderColor: colors.border }]}
             onPress={handlePrevMonth}
             activeOpacity={0.7}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
-            <FontAwesome name="chevron-left" size={13} color={Colors.text} />
+            <FontAwesome name="chevron-left" size={12} color={colors.text} />
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={styles.navButton}
+            style={[styles.navButton, { backgroundColor: colors.background, borderColor: colors.border }]}
             onPress={handleNextMonth}
             activeOpacity={0.7}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
-            <FontAwesome name="chevron-right" size={13} color={Colors.text} />
+            <FontAwesome name="chevron-right" size={12} color={colors.text} />
           </TouchableOpacity>
         </View>
       </View>
 
       {/* Weekday Row */}
-      <View style={styles.weekdayRow}>
+      <View style={[styles.weekdayRow, { borderBottomColor: colors.border }]}>
         {WEEKDAY_HEADERS.map((day, idx) => (
-          <Text key={idx} style={styles.weekdayText}>
+          <Text key={idx} style={[styles.weekdayText, { color: colors.textSecondary }]}>
             {day}
           </Text>
         ))}
@@ -138,9 +141,10 @@ export default function HabitMonthlyCalendar({
               <TouchableOpacity
                 style={[
                   styles.dayCell,
+                  { backgroundColor: colors.background },
                   !isCurrentMonth && styles.dayCellOutOfMonth,
-                  isTodayDate && styles.dayCellToday,
-                  isDone && [styles.dayCellDone, { backgroundColor: habitColor, borderColor: habitColor }],
+                  isTodayDate && { borderColor: activeHabitColor, borderWidth: 1.5 },
+                  isDone && [styles.dayCellDone, { backgroundColor: activeHabitColor, borderColor: activeHabitColor }],
                   isFuture && styles.dayCellFuture,
                 ]}
                 disabled={isFuture}
@@ -148,14 +152,15 @@ export default function HabitMonthlyCalendar({
                 activeOpacity={0.7}
               >
                 {isDone ? (
-                  <FontAwesome name="check" size={13} color="#ffffff" />
+                  <FontAwesome name="check" size={12} color="#ffffff" />
                 ) : (
                   <Text
                     style={[
                       styles.dayNumber,
-                      !isCurrentMonth && styles.dayNumberOutOfMonth,
-                      isTodayDate && { color: habitColor, fontWeight: '700' },
-                      isFuture && styles.dayNumberFuture,
+                      { color: colors.text },
+                      !isCurrentMonth && { color: colors.textSecondary },
+                      isTodayDate && { color: activeHabitColor, fontFamily: Fonts.bold },
+                      isFuture && { color: colors.textSecondary },
                     ]}
                   >
                     {cell.date.getDate()}
@@ -168,22 +173,29 @@ export default function HabitMonthlyCalendar({
       </View>
 
       {/* Legend & Hint */}
-      <View style={styles.footer}>
+      <View style={[styles.footer, { borderTopColor: colors.border }]}>
         <View style={styles.legend}>
           <View style={styles.legendItem}>
-            <View style={[styles.legendDot, { backgroundColor: habitColor }]} />
-            <Text style={styles.legendText}>Completed</Text>
+            <View style={[styles.legendDot, { backgroundColor: activeHabitColor }]} />
+            <Text style={[styles.legendText, { color: colors.textSecondary }]}>Completed</Text>
           </View>
           <View style={styles.legendItem}>
-            <View style={[styles.legendDot, styles.legendTodayDot, { borderColor: habitColor }]} />
-            <Text style={styles.legendText}>Today</Text>
+            <View style={[styles.legendDot, styles.legendTodayDot, { borderColor: activeHabitColor }]} />
+            <Text style={[styles.legendText, { color: colors.textSecondary }]}>Today</Text>
           </View>
           <View style={styles.legendItem}>
-            <View style={[styles.legendDot, styles.legendPendingDot]} />
-            <Text style={styles.legendText}>Pending</Text>
+            <View
+              style={[
+                styles.legendDot,
+                { backgroundColor: isDark ? colors.cardSecondary : colors.border },
+              ]}
+            />
+            <Text style={[styles.legendText, { color: colors.textSecondary }]}>Pending</Text>
           </View>
         </View>
-        <Text style={styles.hintText}>Tap any day to toggle your status</Text>
+        <Text style={[styles.hintText, { color: colors.textSecondary }]}>
+          Tap any day to toggle your status
+        </Text>
       </View>
     </View>
   );
@@ -191,13 +203,11 @@ export default function HabitMonthlyCalendar({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.card,
     borderRadius: 18,
     padding: 18,
     marginHorizontal: 16,
     marginVertical: 10,
     borderWidth: 1,
-    borderColor: Colors.border,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.04,
@@ -215,14 +225,12 @@ const styles = StyleSheet.create({
   },
   monthTitle: {
     fontSize: 18,
-    fontWeight: '700',
-    color: Colors.text,
+    fontFamily: Fonts.bold,
   },
   monthSubtitle: {
     fontSize: 12,
-    color: Colors.textSecondary,
+    fontFamily: Fonts.medium,
     marginTop: 2,
-    fontWeight: '500',
   },
   navButtons: {
     flexDirection: 'row',
@@ -233,38 +241,33 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 6,
-    backgroundColor: Colors.border,
+    borderWidth: 1,
     marginRight: 4,
   },
   todayButtonText: {
     fontSize: 11,
-    fontWeight: '600',
-    color: Colors.text,
+    fontFamily: Fonts.bold,
   },
   navButton: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: Colors.background,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: Colors.border,
   },
   weekdayRow: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     paddingBottom: 10,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
     marginBottom: 8,
   },
   weekdayText: {
     width: 36,
     textAlign: 'center',
     fontSize: 12,
-    fontWeight: '600',
-    color: Colors.textSecondary,
+    fontFamily: Fonts.semiBold,
   },
   grid: {
     flexDirection: 'row',
@@ -282,16 +285,11 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.background,
     borderWidth: 1,
     borderColor: 'transparent',
   },
   dayCellOutOfMonth: {
     opacity: 0.35,
-  },
-  dayCellToday: {
-    borderColor: Colors.tint,
-    borderWidth: 1.5,
   },
   dayCellDone: {
     borderWidth: 0,
@@ -302,24 +300,16 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   dayCellFuture: {
-    opacity: 0.4,
+    opacity: 0.35,
   },
   dayNumber: {
     fontSize: 13,
-    fontWeight: '500',
-    color: Colors.text,
-  },
-  dayNumberOutOfMonth: {
-    color: Colors.textSecondary,
-  },
-  dayNumberFuture: {
-    color: Colors.textSecondary,
+    fontFamily: Fonts.medium,
   },
   footer: {
     marginTop: 16,
     paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: Colors.border,
     alignItems: 'center',
     gap: 8,
   },
@@ -343,17 +333,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     borderWidth: 1.5,
   },
-  legendPendingDot: {
-    backgroundColor: Colors.border,
-  },
   legendText: {
     fontSize: 11,
-    color: Colors.textSecondary,
-    fontWeight: '500',
+    fontFamily: Fonts.medium,
   },
   hintText: {
     fontSize: 11,
-    color: Colors.textSecondary,
+    fontFamily: Fonts.regular,
     fontStyle: 'italic',
   },
 });

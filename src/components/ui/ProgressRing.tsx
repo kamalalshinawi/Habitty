@@ -1,7 +1,8 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { Colors } from '../../constants/colors';
 import Svg, { Circle } from 'react-native-svg';
+import { useTheme } from '../../context/ThemeContext';
+import { Fonts } from '../../constants/fonts';
 
 type Props = {
   progress: number; // 0 to 1
@@ -18,6 +19,8 @@ export default function ProgressRing({
   label,
   sublabel,
 }: Props) {
+  const { colors } = useTheme();
+
   const clamped = Math.min(Math.max(progress, 0), 1);
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
@@ -31,16 +34,16 @@ export default function ProgressRing({
           cy={size / 2}
           r={radius}
           strokeWidth={strokeWidth}
-          stroke={Colors.border}
+          stroke={colors.border}
           fill="transparent"
-          strokeOpacity={0.3}
+          strokeOpacity={0.4}
         />
         <Circle
           cx={size / 2}
           cy={size / 2}
           r={radius}
           strokeWidth={strokeWidth}
-          stroke={Colors.tint}
+          stroke={colors.tint}
           fill="transparent"
           strokeDasharray={circumference}
           strokeDashoffset={dashOffset}
@@ -49,10 +52,12 @@ export default function ProgressRing({
         />
       </Svg>
       <View style={[StyleSheet.absoluteFill, styles.center]}>
-        {label ? <Text style={styles.label}>{label}</Text> : null}
-        <Text style={styles.value}>{Math.round(clamped * 100)}%</Text>
+        {label ? <Text style={[styles.label, { color: colors.textSecondary }]}>{label}</Text> : null}
+        <Text style={[styles.value, { color: colors.text }]}>{Math.round(clamped * 100)}%</Text>
       </View>
-      {sublabel ? <Text style={styles.sublabel}>{sublabel}</Text> : null}
+      {sublabel ? (
+        <Text style={[styles.sublabel, { color: colors.textSecondary }]}>{sublabel}</Text>
+      ) : null}
     </View>
   );
 }
@@ -71,17 +76,16 @@ const styles = StyleSheet.create({
   },
   value: {
     fontSize: 16,
-    fontWeight: '700',
-    color: Colors.text,
+    fontFamily: Fonts.extraBold,
   },
   label: {
     fontSize: 10,
-    color: Colors.textSecondary,
+    fontFamily: Fonts.medium,
     marginBottom: 2,
   },
   sublabel: {
     fontSize: 12,
-    color: Colors.textSecondary,
+    fontFamily: Fonts.medium,
     marginTop: 4,
   },
 });
