@@ -27,7 +27,7 @@ export default function HabitDetailScreen() {
   const navigation = useNavigation<DetailNavigationProp>();
   const route = useRoute<DetailRouteProp>();
   const { habitId } = route.params;
-  const { colors, isDark } = useTheme();
+  const { colors } = useTheme();
 
   const {
     habit,

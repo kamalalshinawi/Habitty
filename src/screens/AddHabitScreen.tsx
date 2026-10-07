@@ -14,7 +14,8 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 
-import { Colors } from '../constants/colors';
+import { useTheme } from '../context/ThemeContext';
+import { Fonts } from '../constants/fonts';
 import type { RootStackParamList } from '../navigation/types';
 import { useHabits } from '../features/habits/hooks/useHabits';
 
@@ -44,6 +45,7 @@ const FREQUENCIES = ['Every Day', 'Weekdays', 'Weekends'];
 
 export default function AddHabitScreen() {
   const navigation = useNavigation<AddHabitNavProp>();
+  const { colors, isDark } = useTheme();
   const { addHabit } = useHabits();
 
   const [title, setTitle] = useState('');
@@ -77,27 +79,27 @@ export default function AddHabitScreen() {
   const isTitleValid = title.trim().length > 0;
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={[styles.safe, { backgroundColor: colors.background }]}>
       <KeyboardAvoidingView
         style={styles.flex}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         {/* Navigation Bar */}
-        <View style={styles.navBar}>
+        <View style={[styles.navBar, { borderBottomColor: colors.border }]}>
           <TouchableOpacity
             style={styles.cancelButton}
             onPress={() => navigation.goBack()}
             activeOpacity={0.7}
           >
-            <Text style={styles.cancelButtonText}>Cancel</Text>
+            <Text style={[styles.cancelButtonText, { color: colors.textSecondary }]}>Cancel</Text>
           </TouchableOpacity>
 
-          <Text style={styles.navBarTitle}>New Habit</Text>
+          <Text style={[styles.navBarTitle, { color: colors.text }]}>New Habit</Text>
 
           <TouchableOpacity
             style={[
               styles.saveHeaderButton,
-              { backgroundColor: isTitleValid ? selectedColor : Colors.border },
+              { backgroundColor: isTitleValid ? selectedColor : colors.border },
             ]}
             onPress={handleCreate}
             disabled={!isTitleValid}
@@ -106,7 +108,7 @@ export default function AddHabitScreen() {
             <Text
               style={[
                 styles.saveHeaderButtonText,
-                !isTitleValid && styles.saveHeaderButtonDisabledText,
+                !isTitleValid && { color: colors.textSecondary },
               ]}
             >
               Save
@@ -120,22 +122,33 @@ export default function AddHabitScreen() {
         >
           {/* Live Card Preview */}
           <View style={styles.previewSection}>
-            <Text style={styles.previewLabel}>LIVE PREVIEW</Text>
-            <View style={[styles.previewCard, { borderLeftColor: selectedColor }]}>
+            <Text style={[styles.previewLabel, { color: colors.textSecondary }]}>LIVE PREVIEW</Text>
+            <View
+              style={[
+                styles.previewCard,
+                {
+                  backgroundColor: colors.card,
+                  borderColor: colors.border,
+                  borderLeftColor: selectedColor,
+                },
+              ]}
+            >
               <View style={styles.previewCardContent}>
                 <View style={[styles.previewIconCircle, { backgroundColor: `${selectedColor}18` }]}>
                   <FontAwesome name={selectedIcon as any} size={18} color={selectedColor} />
                 </View>
                 <View style={styles.previewTextContainer}>
-                  <Text style={styles.previewCardTitle} numberOfLines={1}>
+                  <Text style={[styles.previewCardTitle, { color: colors.text }]} numberOfLines={1}>
                     {title.trim() || 'Habit Name'}
                   </Text>
-                  <Text style={styles.previewCardDesc} numberOfLines={1}>
+                  <Text style={[styles.previewCardDesc, { color: colors.textSecondary }]} numberOfLines={1}>
                     {description.trim() || 'Description or daily target'}
                   </Text>
                   <View style={styles.previewStreak}>
-                    <FontAwesome name="fire" size={12} color={Colors.warning} />
-                    <Text style={styles.previewStreakText}>0 day streak • {selectedFrequency}</Text>
+                    <FontAwesome name="fire" size={12} color={colors.warning} />
+                    <Text style={[styles.previewStreakText, { color: colors.textSecondary }]}>
+                      0 day streak • {selectedFrequency}
+                    </Text>
                   </View>
                 </View>
                 <View style={[styles.previewCheckbox, { borderColor: selectedColor }]} />
@@ -148,16 +161,17 @@ export default function AddHabitScreen() {
             {/* Title Input */}
             <View style={styles.inputGroup}>
               <View style={styles.inputHeader}>
-                <Text style={styles.inputLabel}>Title *</Text>
-                <Text style={styles.charCounter}>{title.length}/40</Text>
+                <Text style={[styles.inputLabel, { color: colors.text }]}>Title *</Text>
+                <Text style={[styles.charCounter, { color: colors.textSecondary }]}>{title.length}/40</Text>
               </View>
               <TextInput
                 style={[
                   styles.textInput,
+                  { backgroundColor: colors.card, color: colors.text, borderColor: colors.border },
                   errorMessage ? styles.textInputError : undefined,
                 ]}
                 placeholder="e.g. Drink 2L water, Morning jog, Read"
-                placeholderTextColor={Colors.textSecondary}
+                placeholderTextColor={colors.textSecondary}
                 value={title}
                 maxLength={40}
                 onChangeText={(text) => {
@@ -173,11 +187,14 @@ export default function AddHabitScreen() {
 
             {/* Description Input */}
             <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>Description / Goal (Optional)</Text>
+              <Text style={[styles.inputLabel, { color: colors.text }]}>Description / Goal (Optional)</Text>
               <TextInput
-                style={styles.textInput}
+                style={[
+                  styles.textInput,
+                  { backgroundColor: colors.card, color: colors.text, borderColor: colors.border },
+                ]}
                 placeholder="e.g. 20 pages daily, 30 min cardio"
-                placeholderTextColor={Colors.textSecondary}
+                placeholderTextColor={colors.textSecondary}
                 value={description}
                 maxLength={60}
                 onChangeText={setDescription}
@@ -187,7 +204,7 @@ export default function AddHabitScreen() {
 
             {/* Color Palette Picker */}
             <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>Choose Color Theme</Text>
+              <Text style={[styles.inputLabel, { color: colors.text }]}>Choose Color Theme</Text>
               <View style={styles.paletteRow}>
                 {COLOR_PALETTE.map((color) => {
                   const isSelected = selectedColor === color.hex;
@@ -213,7 +230,7 @@ export default function AddHabitScreen() {
 
             {/* Category / Icon Picker */}
             <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>Select Icon</Text>
+              <Text style={[styles.inputLabel, { color: colors.text }]}>Select Icon</Text>
               <View style={styles.iconGrid}>
                 {ICON_OPTIONS.map((item) => {
                   const isSelected = selectedIcon === item.icon;
@@ -222,9 +239,13 @@ export default function AddHabitScreen() {
                       key={item.icon}
                       style={[
                         styles.iconOption,
+                        { backgroundColor: colors.card, borderColor: colors.border },
                         isSelected && [
                           styles.iconOptionSelected,
-                          { borderColor: selectedColor, backgroundColor: `${selectedColor}12` },
+                          {
+                            borderColor: selectedColor,
+                            backgroundColor: isDark ? `${selectedColor}22` : `${selectedColor}12`,
+                          },
                         ],
                       ]}
                       onPress={() => setSelectedIcon(item.icon)}
@@ -232,13 +253,14 @@ export default function AddHabitScreen() {
                     >
                       <FontAwesome
                         name={item.icon as any}
-                        size={18}
-                        color={isSelected ? selectedColor : Colors.textSecondary}
+                        size={17}
+                        color={isSelected ? selectedColor : colors.textSecondary}
                       />
                       <Text
                         style={[
                           styles.iconOptionLabel,
-                          isSelected && { color: selectedColor, fontWeight: '700' },
+                          { color: isSelected ? selectedColor : colors.textSecondary },
+                          isSelected && { fontFamily: Fonts.bold },
                         ]}
                       >
                         {item.label}
@@ -251,7 +273,7 @@ export default function AddHabitScreen() {
 
             {/* Frequency Selection */}
             <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>Frequency</Text>
+              <Text style={[styles.inputLabel, { color: colors.text }]}>Frequency</Text>
               <View style={styles.frequencyRow}>
                 {FREQUENCIES.map((freq) => {
                   const isSelected = selectedFrequency === freq;
@@ -260,9 +282,13 @@ export default function AddHabitScreen() {
                       key={freq}
                       style={[
                         styles.frequencyChip,
+                        { backgroundColor: colors.card, borderColor: colors.border },
                         isSelected && [
                           styles.frequencyChipSelected,
-                          { borderColor: selectedColor, backgroundColor: `${selectedColor}12` },
+                          {
+                            borderColor: selectedColor,
+                            backgroundColor: isDark ? `${selectedColor}22` : `${selectedColor}12`,
+                          },
                         ],
                       ]}
                       onPress={() => setSelectedFrequency(freq)}
@@ -271,7 +297,8 @@ export default function AddHabitScreen() {
                       <Text
                         style={[
                           styles.frequencyChipText,
-                          isSelected && { color: selectedColor, fontWeight: '700' },
+                          { color: isSelected ? selectedColor : colors.textSecondary },
+                          isSelected && { fontFamily: Fonts.bold },
                         ]}
                       >
                         {freq}
@@ -288,7 +315,7 @@ export default function AddHabitScreen() {
             <TouchableOpacity
               style={[
                 styles.createButton,
-                { backgroundColor: isTitleValid ? selectedColor : Colors.border },
+                { backgroundColor: isTitleValid ? selectedColor : colors.border },
               ]}
               onPress={handleCreate}
               disabled={!isTitleValid}
@@ -297,12 +324,12 @@ export default function AddHabitScreen() {
               <FontAwesome
                 name="plus-circle"
                 size={18}
-                color={isTitleValid ? '#ffffff' : Colors.textSecondary}
+                color={isTitleValid ? '#ffffff' : colors.textSecondary}
               />
               <Text
                 style={[
                   styles.createButtonText,
-                  !isTitleValid && styles.createButtonDisabledText,
+                  !isTitleValid && { color: colors.textSecondary },
                 ]}
               >
                 Create Habit
@@ -318,7 +345,6 @@ export default function AddHabitScreen() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: Colors.background,
   },
   flex: {
     flex: 1,
@@ -330,7 +356,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
   },
   cancelButton: {
     paddingVertical: 4,
@@ -338,13 +363,11 @@ const styles = StyleSheet.create({
   },
   cancelButtonText: {
     fontSize: 15,
-    color: Colors.textSecondary,
-    fontWeight: '500',
+    fontFamily: Fonts.medium,
   },
   navBarTitle: {
     fontSize: 17,
-    fontWeight: '700',
-    color: Colors.text,
+    fontFamily: Fonts.bold,
   },
   saveHeaderButton: {
     paddingHorizontal: 16,
@@ -353,11 +376,8 @@ const styles = StyleSheet.create({
   },
   saveHeaderButtonText: {
     fontSize: 14,
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
     color: '#ffffff',
-  },
-  saveHeaderButtonDisabledText: {
-    color: Colors.textSecondary,
   },
   scrollContent: {
     paddingBottom: 32,
@@ -369,18 +389,15 @@ const styles = StyleSheet.create({
   },
   previewLabel: {
     fontSize: 11,
-    fontWeight: '700',
-    color: Colors.textSecondary,
+    fontFamily: Fonts.bold,
     letterSpacing: 0.6,
     marginBottom: 8,
     marginLeft: 4,
   },
   previewCard: {
-    backgroundColor: Colors.card,
     borderRadius: 14,
     borderLeftWidth: 4,
     borderWidth: 1,
-    borderColor: Colors.border,
     padding: 14,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
@@ -405,13 +422,12 @@ const styles = StyleSheet.create({
   },
   previewCardTitle: {
     fontSize: 16,
-    fontWeight: '600',
-    color: Colors.text,
+    fontFamily: Fonts.bold,
     marginBottom: 2,
   },
   previewCardDesc: {
     fontSize: 12,
-    color: Colors.textSecondary,
+    fontFamily: Fonts.medium,
     marginBottom: 4,
   },
   previewStreak: {
@@ -421,8 +437,7 @@ const styles = StyleSheet.create({
   },
   previewStreakText: {
     fontSize: 11,
-    color: Colors.textSecondary,
-    fontWeight: '500',
+    fontFamily: Fonts.semiBold,
   },
   previewCheckbox: {
     width: 24,
@@ -446,29 +461,27 @@ const styles = StyleSheet.create({
   },
   inputLabel: {
     fontSize: 14,
-    fontWeight: '700',
-    color: Colors.text,
+    fontFamily: Fonts.bold,
   },
   charCounter: {
     fontSize: 12,
-    color: Colors.textSecondary,
+    fontFamily: Fonts.medium,
   },
   textInput: {
-    backgroundColor: Colors.card,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: Colors.border,
     paddingHorizontal: 14,
     paddingVertical: 12,
     fontSize: 15,
-    color: Colors.text,
+    fontFamily: Fonts.medium,
   },
   textInputError: {
-    borderColor: Colors.danger,
+    borderColor: '#ef4444',
   },
   errorText: {
     fontSize: 12,
-    color: Colors.danger,
+    color: '#ef4444',
+    fontFamily: Fonts.medium,
     marginTop: -4,
     marginLeft: 4,
   },
@@ -501,10 +514,8 @@ const styles = StyleSheet.create({
   iconOption: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.card,
     borderRadius: 12,
     borderWidth: 1.5,
-    borderColor: Colors.border,
     paddingHorizontal: 12,
     paddingVertical: 10,
     gap: 6,
@@ -518,8 +529,7 @@ const styles = StyleSheet.create({
   },
   iconOptionLabel: {
     fontSize: 12,
-    fontWeight: '500',
-    color: Colors.textSecondary,
+    fontFamily: Fonts.medium,
   },
   frequencyRow: {
     flexDirection: 'row',
@@ -531,15 +541,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 11,
     borderRadius: 12,
-    backgroundColor: Colors.card,
     borderWidth: 1.5,
-    borderColor: Colors.border,
   },
   frequencyChipSelected: {},
   frequencyChipText: {
     fontSize: 13,
-    fontWeight: '600',
-    color: Colors.textSecondary,
+    fontFamily: Fonts.semiBold,
   },
   bottomCtaContainer: {
     paddingHorizontal: 16,
@@ -560,10 +567,7 @@ const styles = StyleSheet.create({
   },
   createButtonText: {
     fontSize: 16,
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
     color: '#ffffff',
-  },
-  createButtonDisabledText: {
-    color: Colors.textSecondary,
   },
 });

@@ -12,7 +12,8 @@ import {
   View,
 } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Colors } from '../../constants/colors';
+import { useTheme } from '../../context/ThemeContext';
+import { Fonts } from '../../constants/fonts';
 import type { Habit } from '../../types/habit';
 
 type Props = {
@@ -22,28 +23,30 @@ type Props = {
 };
 
 const COLOR_OPTIONS = [
-  Colors.habitColors.blue,
-  Colors.habitColors.green,
-  Colors.habitColors.amber,
-  Colors.habitColors.rose,
-  Colors.habitColors.indigo,
-  Colors.habitColors.teal,
-  Colors.habitColors.violet,
-  Colors.habitColors.orange,
+  '#3b82f6',
+  '#22c55e',
+  '#f59e0b',
+  '#f43f5e',
+  '#6366f1',
+  '#14b8a8',
+  '#8b5cf6',
+  '#f97316',
 ];
 
 const PRESETS = [
-  { emoji: '💧', title: 'Drink Water', description: '8 glasses a day', color: Colors.habitColors.blue },
-  { emoji: '🏃', title: 'Morning Run', description: '30 min exercise', color: Colors.habitColors.green },
-  { emoji: '📚', title: 'Read Book', description: '20 pages daily', color: Colors.habitColors.amber },
-  { emoji: '🧘', title: 'Meditation', description: '10 min mindfulness', color: Colors.habitColors.violet },
-  { emoji: '🌙', title: 'Sleep Early', description: '8 hours of rest', color: Colors.habitColors.indigo },
-  { emoji: '🥗', title: 'Healthy Diet', description: 'Clean eating & veggies', color: Colors.habitColors.teal },
-  { emoji: '💪', title: 'Daily Workout', description: 'Strength & stretching', color: Colors.habitColors.rose },
-  { emoji: '✍️', title: 'Journaling', description: 'Reflect on the day', color: Colors.habitColors.orange },
+  { emoji: '💧', title: 'Drink Water', description: '8 glasses a day', color: '#3b82f6' },
+  { emoji: '🏃', title: 'Morning Run', description: '30 min exercise', color: '#22c55e' },
+  { emoji: '📚', title: 'Read Book', description: '20 pages daily', color: '#f59e0b' },
+  { emoji: '🧘', title: 'Meditation', description: '10 min mindfulness', color: '#8b5cf6' },
+  { emoji: '🌙', title: 'Sleep Early', description: '8 hours of rest', color: '#6366f1' },
+  { emoji: '🥗', title: 'Healthy Diet', description: 'Clean eating & veggies', color: '#14b8a8' },
+  { emoji: '💪', title: 'Daily Workout', description: 'Strength & stretching', color: '#f43f5e' },
+  { emoji: '✍️', title: 'Journaling', description: 'Reflect on the day', color: '#f97316' },
 ];
 
 export default function AddHabitModal({ visible, onClose, onAddHabit }: Props) {
+  const { colors } = useTheme();
+
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [selectedColor, setSelectedColor] = useState(COLOR_OPTIONS[0]);
@@ -97,27 +100,27 @@ export default function AddHabitModal({ visible, onClose, onAddHabit }: Props) {
               behavior={Platform.OS === 'ios' ? 'padding' : undefined}
               style={styles.sheetContainer}
             >
-              <View style={styles.sheet}>
+              <View style={[styles.sheet, { backgroundColor: colors.card, borderColor: colors.border }]}>
                 {/* Drag / Top indicator */}
                 <View style={styles.indicatorContainer}>
-                  <View style={styles.indicator} />
+                  <View style={[styles.indicator, { backgroundColor: colors.border }]} />
                 </View>
 
                 {/* Header */}
                 <View style={styles.header}>
                   <View>
-                    <Text style={styles.headerTitle}>New Habit</Text>
-                    <Text style={styles.headerSubtitle}>
+                    <Text style={[styles.headerTitle, { color: colors.text }]}>New Habit</Text>
+                    <Text style={[styles.headerSubtitle, { color: colors.textSecondary }]}>
                       Create a daily routine to build consistency
                     </Text>
                   </View>
                   <TouchableOpacity
-                    style={styles.closeButton}
+                    style={[styles.closeButton, { backgroundColor: colors.background }]}
                     onPress={handleClose}
                     activeOpacity={0.7}
                     hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                   >
-                    <FontAwesome name="times" size={16} color={Colors.textSecondary} />
+                    <FontAwesome name="times" size={14} color={colors.textSecondary} />
                   </TouchableOpacity>
                 </View>
 
@@ -127,7 +130,7 @@ export default function AddHabitModal({ visible, onClose, onAddHabit }: Props) {
                 >
                   {/* Quick Inspiration Presets */}
                   <View style={styles.section}>
-                    <Text style={styles.sectionLabel}>Quick Presets</Text>
+                    <Text style={[styles.sectionLabel, { color: colors.textSecondary }]}>QUICK PRESETS</Text>
                     <ScrollView
                       horizontal
                       showsHorizontalScrollIndicator={false}
@@ -138,16 +141,25 @@ export default function AddHabitModal({ visible, onClose, onAddHabit }: Props) {
                           key={preset.title}
                           style={[
                             styles.presetPill,
+                            { backgroundColor: colors.background, borderColor: colors.border },
                             title === preset.title && [
                               styles.presetPillActive,
-                              { borderColor: preset.color },
+                              { borderColor: preset.color, backgroundColor: `${preset.color}15` },
                             ],
                           ]}
                           onPress={() => handleSelectPreset(preset)}
                           activeOpacity={0.7}
                         >
                           <Text style={styles.presetEmoji}>{preset.emoji}</Text>
-                          <Text style={styles.presetText}>{preset.title}</Text>
+                          <Text
+                            style={[
+                              styles.presetText,
+                              { color: colors.text },
+                              title === preset.title && { color: preset.color, fontFamily: Fonts.bold },
+                            ]}
+                          >
+                            {preset.title}
+                          </Text>
                         </TouchableOpacity>
                       ))}
                     </ScrollView>
@@ -155,58 +167,48 @@ export default function AddHabitModal({ visible, onClose, onAddHabit }: Props) {
 
                   {/* Habit Title Input */}
                   <View style={styles.section}>
-                    <Text style={styles.sectionLabel}>Habit Title *</Text>
+                    <Text style={[styles.sectionLabel, { color: colors.textSecondary }]}>HABIT TITLE *</Text>
                     <View style={styles.inputWrapper}>
                       <TextInput
-                        style={styles.input}
-                        placeholder="e.g., Morning Workout, Read 20 pages"
-                        placeholderTextColor={Colors.textSecondary}
+                        style={[
+                          styles.textInput,
+                          { backgroundColor: colors.background, color: colors.text, borderColor: colors.border },
+                        ]}
+                        placeholder="e.g. Read 20 pages, 30 min workout"
+                        placeholderTextColor={colors.textSecondary}
                         value={title}
                         onChangeText={setTitle}
-                        autoCapitalize="sentences"
                         maxLength={50}
+                        returnKeyType="next"
                       />
-                      {title.length > 0 && (
-                        <TouchableOpacity
-                          onPress={() => setTitle('')}
-                          style={styles.clearIcon}
-                          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                        >
-                          <FontAwesome name="times-circle" size={16} color={Colors.textSecondary} />
-                        </TouchableOpacity>
-                      )}
                     </View>
                   </View>
 
-                  {/* Habit Description Input */}
+                  {/* Description Input */}
                   <View style={styles.section}>
-                    <Text style={styles.sectionLabel}>Description (Optional)</Text>
+                    <Text style={[styles.sectionLabel, { color: colors.textSecondary }]}>
+                      DESCRIPTION / GOAL (OPTIONAL)
+                    </Text>
                     <View style={styles.inputWrapper}>
                       <TextInput
-                        style={styles.input}
-                        placeholder="e.g., 30 mins before breakfast"
-                        placeholderTextColor={Colors.textSecondary}
+                        style={[
+                          styles.textInput,
+                          { backgroundColor: colors.background, color: colors.text, borderColor: colors.border },
+                        ]}
+                        placeholder="e.g. Daily morning routine"
+                        placeholderTextColor={colors.textSecondary}
                         value={description}
                         onChangeText={setDescription}
-                        autoCapitalize="sentences"
-                        maxLength={100}
+                        maxLength={80}
+                        returnKeyType="done"
                       />
-                      {description.length > 0 && (
-                        <TouchableOpacity
-                          onPress={() => setDescription('')}
-                          style={styles.clearIcon}
-                          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                        >
-                          <FontAwesome name="times-circle" size={16} color={Colors.textSecondary} />
-                        </TouchableOpacity>
-                      )}
                     </View>
                   </View>
 
-                  {/* Color Palette Selector */}
+                  {/* Color Palette */}
                   <View style={styles.section}>
-                    <Text style={styles.sectionLabel}>Theme Color</Text>
-                    <View style={styles.colorPalette}>
+                    <Text style={[styles.sectionLabel, { color: colors.textSecondary }]}>COLOR THEME</Text>
+                    <View style={styles.colorsGrid}>
                       {COLOR_OPTIONS.map((color) => {
                         const isSelected = selectedColor === color;
                         return (
@@ -215,13 +217,13 @@ export default function AddHabitModal({ visible, onClose, onAddHabit }: Props) {
                             style={[
                               styles.colorCircle,
                               { backgroundColor: color },
-                              isSelected && styles.colorCircleSelected,
+                              isSelected && styles.colorCircleActive,
                             ]}
                             onPress={() => setSelectedColor(color)}
                             activeOpacity={0.8}
                           >
                             {isSelected && (
-                              <FontAwesome name="check" size={14} color="#ffffff" />
+                              <FontAwesome name="check" size={13} color="#ffffff" />
                             )}
                           </TouchableOpacity>
                         );
@@ -230,28 +232,34 @@ export default function AddHabitModal({ visible, onClose, onAddHabit }: Props) {
                   </View>
                 </ScrollView>
 
-                {/* Footer Buttons */}
-                <View style={styles.footer}>
+                {/* Footer Action Buttons */}
+                <View style={[styles.footer, { borderTopColor: colors.border }]}>
                   <TouchableOpacity
-                    style={styles.cancelButton}
+                    style={[styles.cancelButton, { backgroundColor: colors.background, borderColor: colors.border }]}
                     onPress={handleClose}
                     activeOpacity={0.7}
                   >
-                    <Text style={styles.cancelButtonText}>Cancel</Text>
+                    <Text style={[styles.cancelButtonText, { color: colors.textSecondary }]}>Cancel</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={[
                       styles.submitButton,
-                      { backgroundColor: selectedColor },
-                      isSubmitDisabled && styles.submitButtonDisabled,
+                      { backgroundColor: isSubmitDisabled ? colors.border : selectedColor },
                     ]}
                     onPress={handleSubmit}
                     disabled={isSubmitDisabled}
                     activeOpacity={0.8}
                   >
-                    <FontAwesome name="plus" size={14} color="#ffffff" style={styles.submitIcon} />
-                    <Text style={styles.submitButtonText}>Create Habit</Text>
+                    <FontAwesome name="plus" size={13} color="#ffffff" style={styles.submitIcon} />
+                    <Text
+                      style={[
+                        styles.submitButtonText,
+                        isSubmitDisabled && { color: colors.textSecondary },
+                      ]}
+                    >
+                      Create Habit
+                    </Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -266,73 +274,68 @@ export default function AddHabitModal({ visible, onClose, onAddHabit }: Props) {
 const styles = StyleSheet.create({
   backdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.45)',
+    backgroundColor: 'rgba(0, 0, 0, 0.55)',
     justifyContent: 'flex-end',
   },
   sheetContainer: {
     width: '100%',
   },
   sheet: {
-    backgroundColor: Colors.background,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
+    borderTopWidth: 1,
     paddingTop: 12,
-    paddingHorizontal: 20,
-    paddingBottom: Platform.OS === 'ios' ? 36 : 24,
     maxHeight: '90%',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.12,
+    shadowOpacity: 0.15,
     shadowRadius: 10,
-    elevation: 8,
+    elevation: 10,
   },
   indicatorContainer: {
     alignItems: 'center',
-    marginBottom: 8,
+    paddingVertical: 4,
   },
   indicator: {
-    width: 40,
+    width: 38,
     height: 4,
     borderRadius: 2,
-    backgroundColor: Colors.border,
   },
   header: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
     justifyContent: 'space-between',
-    marginBottom: 16,
-    paddingTop: 4,
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 8,
+    paddingBottom: 16,
   },
   headerTitle: {
     fontSize: 20,
-    fontWeight: '700',
-    color: Colors.text,
+    fontFamily: Fonts.extraBold,
   },
   headerSubtitle: {
-    fontSize: 13,
-    color: Colors.textSecondary,
+    fontSize: 12,
+    fontFamily: Fonts.medium,
     marginTop: 2,
   },
   closeButton: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: Colors.card,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: Colors.border,
   },
   scrollContent: {
-    paddingBottom: 16,
+    paddingHorizontal: 20,
+    paddingBottom: 24,
   },
   section: {
     marginBottom: 18,
   },
   sectionLabel: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: Colors.text,
+    fontSize: 11,
+    fontFamily: Fonts.bold,
+    letterSpacing: 0.5,
     marginBottom: 8,
   },
   presetsRow: {
@@ -342,91 +345,77 @@ const styles = StyleSheet.create({
   presetPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.card,
-    borderWidth: 1.5,
-    borderColor: Colors.border,
-    borderRadius: 20,
     paddingHorizontal: 12,
-    paddingVertical: 7,
+    paddingVertical: 8,
+    borderRadius: 20,
+    borderWidth: 1,
     gap: 6,
   },
   presetPillActive: {
-    backgroundColor: Colors.background,
+    borderWidth: 1.5,
   },
   presetEmoji: {
     fontSize: 14,
   },
   presetText: {
     fontSize: 12,
-    fontWeight: '600',
-    color: Colors.text,
+    fontFamily: Fonts.medium,
   },
   inputWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.card,
+    width: '100%',
+  },
+  textInput: {
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: Colors.border,
     paddingHorizontal: 14,
+    paddingVertical: 12,
+    fontSize: 15,
+    fontFamily: Fonts.medium,
   },
-  input: {
-    flex: 1,
-    height: 46,
-    fontSize: 14,
-    color: Colors.text,
-  },
-  clearIcon: {
-    padding: 4,
-  },
-  colorPalette: {
+  colorsGrid: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 6,
+    alignItems: 'center',
+    paddingVertical: 4,
   },
   colorCircle: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 34,
+    height: 34,
+    borderRadius: 17,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  colorCircleSelected: {
-    borderWidth: 3,
-    borderColor: '#ffffff',
+  colorCircleActive: {
+    transform: [{ scale: 1.15 }],
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 4,
+    shadowRadius: 3,
+    elevation: 3,
   },
   footer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-    marginTop: 8,
-    paddingTop: 12,
+    paddingHorizontal: 20,
+    paddingVertical: 16,
     borderTopWidth: 1,
-    borderTopColor: Colors.border,
+    gap: 12,
   },
   cancelButton: {
     flex: 1,
-    height: 46,
+    height: 48,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: Colors.border,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.card,
   },
   cancelButtonText: {
     fontSize: 14,
-    fontWeight: '600',
-    color: Colors.textSecondary,
+    fontFamily: Fonts.semiBold,
   },
   submitButton: {
     flex: 2,
-    height: 46,
+    height: 48,
     borderRadius: 12,
     flexDirection: 'row',
     alignItems: 'center',
@@ -437,15 +426,12 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
-  submitButtonDisabled: {
-    opacity: 0.45,
-  },
   submitIcon: {
     marginRight: 6,
   },
   submitButtonText: {
     fontSize: 14,
-    fontWeight: '700',
+    fontFamily: Fonts.bold,
     color: '#ffffff',
   },
 });

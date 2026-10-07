@@ -14,7 +14,7 @@ export default function FloatingActionButton({ onPress }: Props) {
       onPress={onPress}
       activeOpacity={0.8}
     >
-      <FontAwesome name="plus" size={24} color={Colors.background} />
+      <FontAwesome name="plus" size={22} color="#ffffff" />
     </TouchableOpacity>
   );
 }
@@ -30,10 +30,10 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.tint,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: Colors.tint,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowOpacity: 0.25,
+    shadowRadius: 6,
+    elevation: 6,
   },
 });
