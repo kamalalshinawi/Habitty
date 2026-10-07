@@ -1,5 +1,5 @@
-import React from 'react';
 import {
+  Alert,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -37,6 +37,7 @@ export default function HabitDetailScreen() {
     toggleDay,
     toggleToday,
     weeklyTrend,
+    deleteHabit,
   } = useHabitDetail(habitId);
 
   if (!habit) {
@@ -91,6 +92,24 @@ export default function HabitDetailScreen() {
 
   const motivation = getMotivationMessage();
 
+  const handleDeletePress = () => {
+    Alert.alert(
+      'Delete Habit',
+      `Are you sure you want to delete "${habit.title}"? This will remove all associated completion records.`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => {
+            deleteHabit();
+            navigation.goBack();
+          },
+        },
+      ]
+    );
+  };
+
   return (
     <SafeAreaView style={styles.safe}>
       {/* Top Navigation Bar */}
@@ -108,7 +127,14 @@ export default function HabitDetailScreen() {
           Habit Details
         </Text>
 
-        <View style={styles.navBarRightSpacer} />
+        <TouchableOpacity
+          style={styles.navBarDeleteButton}
+          onPress={handleDeletePress}
+          activeOpacity={0.7}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        >
+          <FontAwesome name="trash-o" size={16} color={Colors.danger} />
+        </TouchableOpacity>
       </View>
 
       <ScrollView
@@ -302,8 +328,15 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: Colors.text,
   },
-  navBarRightSpacer: {
+  navBarDeleteButton: {
     width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: Colors.card,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: Colors.border,
   },
   scrollContent: {
     paddingBottom: 24,
