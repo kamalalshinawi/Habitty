@@ -13,6 +13,7 @@ export function useHabitDetail(habitId: string) {
     getLongestStreak,
     getTotalCompletions,
     getCompletionRate,
+    deleteHabit,
   } = useHabits();
 
   const habit: Habit | undefined = useMemo(
@@ -98,5 +99,6 @@ export function useHabitDetail(habitId: string) {
     weeklyTrend,
     getMonthCompletionCount,
     todayDateKey,
+    deleteHabit: () => deleteHabit(habitId),
   };
 }

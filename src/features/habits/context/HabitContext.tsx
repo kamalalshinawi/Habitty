@@ -14,6 +14,7 @@ interface HabitContextType {
   getCompletionRate: (habitId: string) => number;
   todayCompleted: number;
   addHabit: (habit: Habit) => void;
+  deleteHabit: (habitId: string) => void;
 }
 
 const HabitContext = createContext<HabitContextType | undefined>(undefined);
@@ -106,6 +107,21 @@ export function HabitProvider({ children }: { children: React.ReactNode }) {
 
   const addHabit = (habit: Habit) => {
     setHabits((prev) => [...prev, habit]);
+    const todayStr = formatDateKey(new Date());
+    setHabitDays((prev) => ({ ...prev, [`${todayStr}-${habit.id}`]: 'pending' }));
+  };
+
+  const deleteHabit = (habitId: string) => {
+    setHabits((prev) => prev.filter((h) => h.id !== habitId));
+    setHabitDays((prev) => {
+      const next = { ...prev };
+      Object.keys(next).forEach((key) => {
+        if (key.endsWith(`-${habitId}`)) {
+          delete next[key];
+        }
+      });
+      return next;
+    });
   };
 
   const value = {
@@ -119,6 +135,7 @@ export function HabitProvider({ children }: { children: React.ReactNode }) {
     getCompletionRate,
     todayCompleted,
     addHabit,
+    deleteHabit,
   };
 
   return <HabitContext.Provider value={value}>{children}</HabitContext.Provider>;
