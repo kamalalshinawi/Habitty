@@ -12,6 +12,7 @@ import {
 import { Colors } from './src/constants/colors';
 import RootNavigator from './src/navigation/RootNavigator';
 import { HabitProvider } from './src/features/habits/context/HabitContext';
+import { TodoProvider } from './src/features/todos/context/TodoContext';
 import { ThemeProvider, useTheme } from './src/context/ThemeContext';
 
 function MainApp() {
@@ -72,7 +73,9 @@ export default function App() {
   return (
     <ThemeProvider>
       <HabitProvider>
-        <MainApp />
+        <TodoProvider>
+          <MainApp />
+        </TodoProvider>
       </HabitProvider>
     </ThemeProvider>
   );
