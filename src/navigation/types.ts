@@ -1,7 +1,15 @@
-// Placeholder for navigation — replace with expo-router types when set up
-export type RootStackParamList = {
+import { NavigatorScreenParams } from '@react-navigation/native';
+
+export type TabParamList = {
   Home: undefined;
-  HabitDetail: { habitId: string } | undefined;
+  TodoList: undefined;
+  Calendar: undefined;
+  Profile: undefined;
 };
 
-export type NavigationProp = Record<string, unknown>;
+export type RootStackParamList = {
+  Main: NavigatorScreenParams<TabParamList>;
+  HabitDetail: { habitId: string };
+};
+
+export type RootTabParamList = TabParamList;
