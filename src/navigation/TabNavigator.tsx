@@ -31,6 +31,7 @@ export default function TabNavigator() {
               return null;
           }
         },
+        safeAreaInsets: { bottom: 0 },
         tabBarActiveTintColor: colors.tint,
         tabBarInactiveTintColor: colors.textSecondary,
         tabBarStyle: {

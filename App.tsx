@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
-import { ActivityIndicator, StatusBar, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Platform, StyleSheet, View } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+import { NavigationBar } from 'expo-navigation-bar';
 import {
   useFonts,
   Nunito_400Regular,
@@ -17,6 +19,16 @@ import { ThemeProvider, useTheme } from './src/context/ThemeContext';
 
 function MainApp() {
   const { colors, isDark } = useTheme();
+
+  useEffect(() => {
+    if (Platform.OS === 'android') {
+      try {
+        NavigationBar.setHidden(true);
+      } catch {
+        // ignore on unsupported environments
+      }
+    }
+  }, []);
 
   const navigationTheme = isDark
     ? {
@@ -44,10 +56,8 @@ function MainApp() {
 
   return (
     <NavigationContainer theme={navigationTheme}>
-      <StatusBar
-        barStyle={isDark ? 'light-content' : 'dark-content'}
-        backgroundColor={colors.background}
-      />
+      <StatusBar hidden={true} style={isDark ? 'light' : 'dark'} />
+      <NavigationBar hidden={true} />
       <RootNavigator />
     </NavigationContainer>
   );
