@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import TabNavigator from './TabNavigator';
 import { RootStackParamList } from './types';
 import HabitDetailScreen from '../screens/HabitDetailScreen';
+import AddHabitScreen from '../screens/AddHabitScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -18,6 +19,14 @@ export default function RootNavigator() {
         name="HabitDetail"
         component={HabitDetailScreen}
         options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="AddHabit"
+        component={AddHabitScreen}
+        options={{
+          headerShown: false,
+          presentation: 'modal',
+        }}
       />
     </Stack.Navigator>
   );
