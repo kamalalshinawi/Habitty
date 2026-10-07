@@ -1,6 +1,5 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Colors } from '../../../constants/colors';
 import type { Habit, HabitDay, HabitStatus } from '../types';
 import HabitCalendar from '../../../components/ui/HabitCalendar';
 import type { CalendarDay } from '../../../types/habit';
@@ -12,7 +11,7 @@ type Props = {
 };
 
 export default function HabitCalendarView({ habits, habitDays, onToggle }: Props) {
-  const [visibleHabit, setVisibleHabit] = useState(habits[0]?.id ?? '');
+  const visibleHabit = habits[0]?.id ?? '';
 
   const days = useMemo(() => {
     const start = new Date();
@@ -28,8 +27,6 @@ export default function HabitCalendarView({ habits, habitDays, onToggle }: Props
       };
     });
   }, [visibleHabit, habitDays]);
-
-  const visibleHabitObj = habits.find((h) => h.id === visibleHabit) ?? habits[0];
 
   return (
     <View style={styles.container}>
