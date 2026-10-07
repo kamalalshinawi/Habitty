@@ -5,6 +5,9 @@ export interface Habit {
   title: string;
   description?: string;
   color?: string;
+  icon?: string;
+  frequency?: string;
+  createdAt?: string;
 }
 
 export interface HabitDay {
