@@ -15,7 +15,8 @@
       "backgroundColor": "#00000000"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.kamalalshinawi.Habitty"
     },
     "android": {
       "adaptiveIcon": {
@@ -24,10 +25,22 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.kamalalshinawi.Habitty"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "a47a35a0-510a-4481-b4ad-964fb3d1ad5b"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/a47a35a0-510a-4481-b4ad-964fb3d1ad5b"
     }
   }
 }
