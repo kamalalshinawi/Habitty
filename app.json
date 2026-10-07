@@ -4,16 +4,16 @@
     "slug": "Habitty",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": ".\\src\\assets\\appIcon.png",
+    "icon": "./src/assets/appIcon.png",
     "userInterfaceStyle": "light",
-    "androidStatusBar": {
-      "hidden": true,
-      "translucent": true
-    },
-    "androidNavigationBar": {
-      "visible": "sticky-immersive",
-      "backgroundColor": "#00000000"
-    },
+    "plugins": [
+      [
+        "expo-navigation-bar",
+        {
+          "visible": "sticky-immersive"
+        }
+      ]
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.kamalalshinawi.Habitty"
