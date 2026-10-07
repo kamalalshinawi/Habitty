@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "Habi",
-    "slug": "Habi",
+    "name": "Habitty",
+    "slug": "Habitty",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": ".\\src\\assets\\appIcon.png",
     "userInterfaceStyle": "light",
     "androidStatusBar": {
       "hidden": true,

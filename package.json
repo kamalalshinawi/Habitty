@@ -1,5 +1,5 @@
 {
-  "name": "habi",
+  "name": "habitty",
   "version": "1.0.0",
   "main": "index.ts",
   "dependencies": {
