@@ -1,7 +1,8 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Colors } from '../../constants/colors';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { useTheme } from '../../context/ThemeContext';
+import { Fonts } from '../../constants/fonts';
 import type { Habit, HabitStatus } from '../../types/habit';
 
 type Props = {
@@ -13,12 +14,20 @@ type Props = {
 };
 
 export default function HabitCard({ habit, status, streak, onComplete, onPress }: Props) {
+  const { colors } = useTheme();
   const isDone = status === 'done';
-  const color = habit.color ?? Colors.tint;
+  const color = habit.color ?? colors.tint;
 
   return (
     <TouchableOpacity
-      style={[styles.card, { borderLeftColor: color }]}
+      style={[
+        styles.card,
+        {
+          backgroundColor: colors.card,
+          borderColor: colors.border,
+          borderLeftColor: color,
+        },
+      ]}
       activeOpacity={0.7}
       onPress={onPress}
     >
@@ -29,13 +38,17 @@ export default function HabitCard({ habit, status, streak, onComplete, onPress }
           </View>
         ) : null}
         <View style={styles.textContainer}>
-          <Text style={styles.title}>{habit.title}</Text>
+          <Text style={[styles.title, { color: colors.text }]}>{habit.title}</Text>
           {habit.description ? (
-            <Text style={styles.description}>{habit.description}</Text>
+            <Text style={[styles.description, { color: colors.textSecondary }]}>
+              {habit.description}
+            </Text>
           ) : null}
           <View style={styles.streakContainer}>
-            <FontAwesome name="fire" size={14} color={Colors.warning} />
-            <Text style={styles.streakText}>{streak} day streak</Text>
+            <FontAwesome name="fire" size={13} color={colors.warning} />
+            <Text style={[styles.streakText, { color: colors.textSecondary }]}>
+              {streak} day streak
+            </Text>
           </View>
         </View>
 
@@ -43,7 +56,7 @@ export default function HabitCard({ habit, status, streak, onComplete, onPress }
           style={[
             styles.checkbox,
             {
-              backgroundColor: isDone ? color : Colors.background,
+              backgroundColor: isDone ? color : colors.background,
               borderColor: color,
             },
           ]}
@@ -51,7 +64,7 @@ export default function HabitCard({ habit, status, streak, onComplete, onPress }
           activeOpacity={0.7}
         >
           {isDone && (
-            <FontAwesome name="check" size={16} color={Colors.background} />
+            <FontAwesome name="check" size={14} color="#ffffff" />
           )}
         </TouchableOpacity>
       </View>
@@ -61,22 +74,22 @@ export default function HabitCard({ habit, status, streak, onComplete, onPress }
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: Colors.card,
-    borderRadius: 12,
+    borderRadius: 14,
     marginHorizontal: 16,
-    marginVertical: 8,
+    marginVertical: 6,
+    borderWidth: 1,
     borderLeftWidth: 4,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
+    shadowOpacity: 0.04,
+    shadowRadius: 3,
+    elevation: 2,
   },
   content: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: 16,
+    padding: 14,
   },
   iconCircle: {
     width: 38,
@@ -92,13 +105,12 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    fontWeight: '600',
-    color: Colors.text,
+    fontFamily: Fonts.bold,
     marginBottom: 2,
   },
   description: {
     fontSize: 13,
-    color: Colors.textSecondary,
+    fontFamily: Fonts.medium,
     marginBottom: 6,
   },
   streakContainer: {
@@ -108,13 +120,12 @@ const styles = StyleSheet.create({
   },
   streakText: {
     fontSize: 12,
-    color: Colors.textSecondary,
-    fontWeight: '500',
+    fontFamily: Fonts.semiBold,
   },
   checkbox: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
+    width: 26,
+    height: 26,
+    borderRadius: 13,
     borderWidth: 2,
     alignItems: 'center',
     justifyContent: 'center',

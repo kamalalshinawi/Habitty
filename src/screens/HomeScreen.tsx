@@ -1,13 +1,14 @@
 import React from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { FlatList, SafeAreaView, StyleSheet, Text, View } from 'react-native';
-import { Colors } from '../constants/colors';
+import { useTheme } from '../context/ThemeContext';
 import { useHabits } from '../features/habits/hooks/useHabits';
 import HomeHeader from '../components/ui/HomeHeader';
 import DailyProgress from '../components/ui/DailyProgress';
 import HabitCard from '../components/ui/HabitCard';
 import FloatingActionButton from '../components/ui/FloatingActionButton';
 import { formatDateKey } from '../utils/dateHelpers';
+import { Fonts } from '../constants/fonts';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../navigation/types';
 
@@ -15,6 +16,7 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export default function HomeScreen() {
   const navigation = useNavigation<NavigationProp>();
+  const { colors } = useTheme();
   const { habits, toggleDay, getStatus, getStreak, todayCompleted } = useHabits();
   const today = formatDateKey(new Date());
 
@@ -31,7 +33,7 @@ export default function HomeScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={[styles.safe, { backgroundColor: colors.background }]}>
       <HomeHeader />
 
       <DailyProgress completed={todayCompleted} total={habits.length} />
@@ -53,8 +55,8 @@ export default function HomeScreen() {
           ListFooterComponent={<View style={{ height: 80 }} />}
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
-              <Text style={styles.emptyTitle}>No habits yet</Text>
-              <Text style={styles.emptySubtitle}>
+              <Text style={[styles.emptyTitle, { color: colors.text }]}>No habits yet</Text>
+              <Text style={[styles.emptySubtitle, { color: colors.textSecondary }]}>
                 Tap the + button below to create your first habit!
               </Text>
             </View>
@@ -70,7 +72,6 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: Colors.background,
   },
   habitsContainer: {
     flex: 1,
@@ -86,13 +87,12 @@ const styles = StyleSheet.create({
   },
   emptyTitle: {
     fontSize: 18,
-    fontWeight: '700',
-    color: Colors.text,
+    fontFamily: Fonts.bold,
     marginBottom: 6,
   },
   emptySubtitle: {
     fontSize: 14,
-    color: Colors.textSecondary,
+    fontFamily: Fonts.medium,
     textAlign: 'center',
   },
 });
