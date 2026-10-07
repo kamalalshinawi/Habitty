@@ -7,11 +7,13 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useTheme } from '../context/ThemeContext';
 import { useTodos } from '../features/todos/context/TodoContext';
 import { Fonts } from '../constants/fonts';
-import AddTodoModal from '../components/ui/AddTodoModal';
+import type { RootStackParamList } from '../navigation/types';
 import type { Todo, TodoPriority } from '../types/todo';
 
 const PRIORITY_CONFIG: Record<
@@ -24,10 +26,10 @@ const PRIORITY_CONFIG: Record<
 };
 
 export default function TodoListScreen() {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { colors, isDark } = useTheme();
   const {
     todos,
-    addTodo,
     toggleTodo,
     deleteTodo,
     toggleSubtask,
@@ -37,8 +39,11 @@ export default function TodoListScreen() {
 
   const [selectedFilter, setSelectedFilter] = useState<'all' | TodoPriority>('all');
   const [showCompleted, setShowCompleted] = useState(false);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [expandedTodoIds, setExpandedTodoIds] = useState<Record<string, boolean>>({});
+
+  const handleOpenAdd = () => {
+    navigation.navigate('AddTodo');
+  };
 
   const toggleExpand = (todoId: string) => {
     setExpandedTodoIds((prev) => ({
@@ -210,7 +215,7 @@ export default function TodoListScreen() {
 
         <TouchableOpacity
           style={[styles.headerAddBtn, { backgroundColor: colors.tint }]}
-          onPress={() => setIsAddModalOpen(true)}
+          onPress={handleOpenAdd}
           activeOpacity={0.8}
         >
           <FontAwesome name="plus" size={13} color="#ffffff" />
@@ -314,18 +319,11 @@ export default function TodoListScreen() {
       {/* Floating Action Button */}
       <TouchableOpacity
         style={[styles.fab, { backgroundColor: colors.tint }]}
-        onPress={() => setIsAddModalOpen(true)}
+        onPress={handleOpenAdd}
         activeOpacity={0.8}
       >
         <FontAwesome name="plus" size={22} color="#ffffff" />
       </TouchableOpacity>
-
-      {/* Add Task Modal */}
-      <AddTodoModal
-        visible={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
-        onAddTodo={addTodo}
-      />
     </SafeAreaView>
   );
 }

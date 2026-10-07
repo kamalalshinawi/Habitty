@@ -11,6 +11,7 @@ export type RootStackParamList = {
   Main: NavigatorScreenParams<TabParamList>;
   HabitDetail: { habitId: string };
   AddHabit: undefined;
+  AddTodo: undefined;
 };
 
 export type RootTabParamList = TabParamList;

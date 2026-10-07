@@ -4,6 +4,7 @@ import TabNavigator from './TabNavigator';
 import { RootStackParamList } from './types';
 import HabitDetailScreen from '../screens/HabitDetailScreen';
 import AddHabitScreen from '../screens/AddHabitScreen';
+import AddTodoScreen from '../screens/AddTodoScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -23,6 +24,14 @@ export default function RootNavigator() {
       <Stack.Screen
         name="AddHabit"
         component={AddHabitScreen}
+        options={{
+          headerShown: false,
+          presentation: 'modal',
+        }}
+      />
+      <Stack.Screen
+        name="AddTodo"
+        component={AddTodoScreen}
         options={{
           headerShown: false,
           presentation: 'modal',
