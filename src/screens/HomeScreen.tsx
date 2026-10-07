@@ -1,35 +1,56 @@
 import React from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { FlatList, SafeAreaView, StyleSheet, View } from 'react-native';
 import { Colors } from '../constants/colors';
-import HabitCalendarView from '../features/habits/components/HabitCalendarView';
-import HabitHeader from '../features/habits/components/HabitHeader';
 import { useHabits } from '../features/habits/hooks/useHabits';
-import { DUMMY_HABITS, getDummyHabitDays } from '../constants/dummyData';
+import HomeHeader from '../components/ui/HomeHeader';
+import DailyProgress from '../components/ui/DailyProgress';
+import HabitCard from '../components/ui/HabitCard';
+import FloatingActionButton from '../components/ui/FloatingActionButton';
+import { formatDateKey } from '../utils/dateHelpers';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '../navigation/types';
+
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export default function HomeScreen() {
-  const { habitDays, toggleDay, getStatus } = useHabits();
+  const navigation = useNavigation<NavigationProp>();
+  const { habits, toggleDay, getStatus, getStreak, todayCompleted } = useHabits();
+  const today = formatDateKey(new Date());
 
-  const today = new Date();
-  const daysWithData = React.useMemo(
-    () => getDummyHabitDays(DUMMY_HABITS, today),
-    [today]
-  );
+  const handleToggle = (habitId: string) => {
+    toggleDay(today, habitId);
+  };
 
-  const firstHabit = DUMMY_HABITS[0];
+  const handleHabitPress = (habitId: string) => {
+    navigation.navigate('HabitDetail', { habitId });
+  };
 
   return (
     <SafeAreaView style={styles.safe}>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <HabitHeader habit={firstHabit} />
+      <HomeHeader />
 
-        <View style={styles.calendarContainer}>
-          <HabitCalendarView
-            habits={DUMMY_HABITS}
-            habitDays={daysWithData}
-            onToggle={toggleDay}
-          />
-        </View>
-      </ScrollView>
+      <DailyProgress completed={todayCompleted} total={habits.length} />
+
+      <View style={styles.habitsContainer}>
+        <FlatList
+          data={habits}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <HabitCard
+              habit={item}
+              status={getStatus(today, item.id)}
+              streak={getStreak(item.id)}
+              onComplete={() => handleToggle(item.id)}
+              onPress={() => handleHabitPress(item.id)}
+            />
+          )}
+          contentContainerStyle={styles.listContent}
+          ListFooterComponent={<View style={{ height: 80 }} />}
+        />
+      </View>
+
+      <FloatingActionButton onPress={() => console.log('Add habit pressed')} />
     </SafeAreaView>
   );
 }
@@ -39,7 +60,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.background,
   },
-  calendarContainer: {
-    paddingHorizontal: 8,
+  habitsContainer: {
+    flex: 1,
+  },
+  listContent: {
+    paddingBottom: 16,
   },
 });
