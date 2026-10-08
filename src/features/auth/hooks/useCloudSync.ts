@@ -47,7 +47,7 @@ export function useCloudSync() {
 
         if (!isMounted) return;
 
-        if (cloudHabits && cloudHabits.habits.length > 0) {
+        if (cloudHabits !== null) {
           dispatch(
             setHabitsState({
               habits: cloudHabits.habits,
@@ -55,7 +55,7 @@ export function useCloudSync() {
             })
           );
         } else {
-          // Initialize new account with current data
+          // Initialize new account with starting data
           await syncUserHabits(
             userId,
             latestDataRef.current.habits,
@@ -63,10 +63,10 @@ export function useCloudSync() {
           );
         }
 
-        if (cloudTodos && cloudTodos.todos.length > 0) {
+        if (cloudTodos !== null) {
           dispatch(setTodosState(cloudTodos.todos));
         } else {
-          // Initialize new account with current data
+          // Initialize new account with starting data
           await syncUserTodos(userId, latestDataRef.current.todos);
         }
 

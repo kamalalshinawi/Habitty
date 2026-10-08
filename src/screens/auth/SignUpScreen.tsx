@@ -99,9 +99,21 @@ export default function SignUpScreen() {
             {activeError ? (
               <View style={[styles.errorBanner, { backgroundColor: `${colors.danger}15`, borderColor: `${colors.danger}40` }]}>
                 <FontAwesome name="exclamation-circle" size={16} color={colors.danger} />
-                <Text style={[styles.errorBannerText, { color: colors.danger }]}>
-                  {activeError}
-                </Text>
+                <View style={{ flex: 1 }}>
+                  <Text style={[styles.errorBannerText, { color: colors.danger }]}>
+                    {activeError}
+                  </Text>
+                  {activeError.includes('already registered') ? (
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate('SignIn')}
+                      style={{ marginTop: 6 }}
+                    >
+                      <Text style={{ color: colors.tint, fontFamily: Fonts.bold, fontSize: 13 }}>
+                        Sign in to your existing account →
+                      </Text>
+                    </TouchableOpacity>
+                  ) : null}
+                </View>
               </View>
             ) : null}
 
