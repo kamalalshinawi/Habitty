@@ -8,7 +8,10 @@ export type TabParamList = {
 };
 
 export type RootStackParamList = {
-  Main: NavigatorScreenParams<TabParamList>;
+  SignIn: undefined;
+  SignUp: undefined;
+  ForgotPassword: undefined;
+  Main: NavigatorScreenParams<TabParamList> | undefined;
   HabitDetail: { habitId: string };
   AddHabit: undefined;
   AddTodo: undefined;

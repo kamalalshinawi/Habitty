@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import {
+  Alert,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -11,12 +12,25 @@ import {
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useTheme } from '../context/ThemeContext';
 import { useHabits } from '../features/habits/hooks/useHabits';
+import { useAuth } from '../features/auth/hooks/useAuth';
 import { Fonts } from '../constants/fonts';
 
 export default function ProfileScreen() {
   const { colors, isDark, toggleTheme, setThemeMode } = useTheme();
   const { habits, todayCompleted } = useHabits();
+  const { user, signOut } = useAuth();
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+
+  const handleSignOut = () => {
+    Alert.alert('Sign Out', 'Are you sure you want to sign out of your account?', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Sign Out',
+        style: 'destructive',
+        onPress: () => signOut(),
+      },
+    ]);
+  };
 
   return (
     <SafeAreaView style={[styles.safe, { backgroundColor: colors.background }]}>
@@ -26,9 +40,11 @@ export default function ProfileScreen() {
           <View style={[styles.avatarContainer, { backgroundColor: `${colors.tint}20`, borderColor: colors.tint }]}>
             <FontAwesome name="user" size={36} color={colors.tint} />
           </View>
-          <Text style={[styles.userName, { color: colors.text }]}>Kamal Alshinawi</Text>
+          <Text style={[styles.userName, { color: colors.text }]}>
+            {user?.displayName || 'Habitty User'}
+          </Text>
           <Text style={[styles.userSubtitle, { color: colors.textSecondary }]}>
-            Building positive habits daily
+            {user?.email || 'Building positive habits daily'}
           </Text>
         </View>
 
@@ -176,6 +192,49 @@ export default function ProfileScreen() {
               </View>
               <Text style={[styles.badgeValue, { color: colors.tint }]}>Active</Text>
             </View>
+          </View>
+        </View>
+
+        {/* Account Section */}
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>ACCOUNT</Text>
+
+          <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <View style={styles.settingRow}>
+              <View style={styles.settingLeft}>
+                <View style={[styles.iconBox, { backgroundColor: `${colors.tint}18` }]}>
+                  <FontAwesome name="cloud" size={15} color={colors.tint} />
+                </View>
+                <View>
+                  <Text style={[styles.settingTitle, { color: colors.text }]}>Cloud Sync</Text>
+                  <Text style={[styles.settingSubtitle, { color: colors.textSecondary }]}>
+                    Firebase Firestore active
+                  </Text>
+                </View>
+              </View>
+              <Text style={[styles.badgeValue, { color: colors.success }]}>Online</Text>
+            </View>
+
+            <View style={[styles.divider, { backgroundColor: colors.border }]} />
+
+            <TouchableOpacity
+              style={styles.settingRow}
+              onPress={handleSignOut}
+              activeOpacity={0.7}
+            >
+              <View style={styles.settingLeft}>
+                <View style={[styles.iconBox, { backgroundColor: `${colors.danger}18` }]}>
+                  <FontAwesome name="sign-out" size={16} color={colors.danger} />
+                </View>
+                <View>
+                  <Text style={[styles.settingTitle, { color: colors.danger }]}>Sign Out</Text>
+                  <Text style={[styles.settingSubtitle, { color: colors.textSecondary }]}>
+                    Log out of {user?.email || 'this device'}
+                  </Text>
+                </View>
+              </View>
+              <FontAwesome name="chevron-right" size={13} color={colors.textSecondary} />
+            </TouchableOpacity>
           </View>
         </View>
 
