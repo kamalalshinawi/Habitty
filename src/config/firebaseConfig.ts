@@ -1,14 +1,25 @@
 /**
- * Firebase Configuration
+ * Firebase Configuration for Habitty
  *
- * Reads from Expo public environment variables (EXPO_PUBLIC_FIREBASE_*)
- * with fallback placeholders that can be populated directly or via .env
+ * Connected to Firebase project: habitty-a9dff
  */
 export const firebaseConfig = {
-  apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY || 'AIzaSyDemoPlaceholderKeyForHabittyApp123',
-  authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN || 'habitty-app.firebaseapp.com',
-  projectId: process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID || 'habitty-app',
-  storageBucket: process.env.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET || 'habitty-app.appspot.com',
-  messagingSenderId: process.env.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || '123456789012',
-  appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID || '1:123456789012:web:abcdef1234567890abcdef',
+  apiKey:
+    process.env.EXPO_PUBLIC_FIREBASE_API_KEY ||
+    'AIzaSyAK6pHrqdCc_DMSLW_muaF-jkYVqlU17bk',
+  authDomain:
+    process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN ||
+    'habitty-a9dff.firebaseapp.com',
+  projectId:
+    process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID || 'habitty-a9dff',
+  storageBucket:
+    process.env.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET ||
+    'habitty-a9dff.firebasestorage.app',
+  messagingSenderId:
+    process.env.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || '911250372773',
+  appId:
+    process.env.EXPO_PUBLIC_FIREBASE_APP_ID ||
+    '1:911250372773:web:8de54b412f17fadbc3f54c',
+  measurementId:
+    process.env.EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID || 'G-NDDFQ82N0R',
 };
