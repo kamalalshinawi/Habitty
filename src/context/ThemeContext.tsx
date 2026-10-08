@@ -1,7 +1,13 @@
-import React, { createContext, useContext, useState } from 'react';
+import React from 'react';
 import { Colors } from '../constants/colors';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import {
+  toggleTheme as toggleThemeAction,
+  setThemeMode as setThemeModeAction,
+  type ThemeMode,
+} from '../features/theme/themeSlice';
 
-export type ThemeMode = 'light' | 'dark';
+export type { ThemeMode };
 
 export interface ThemeColors {
   background: string;
@@ -48,45 +54,29 @@ export const darkColors: ThemeColors = {
   habitColors: Colors.habitColors,
 };
 
-interface ThemeContextType {
-  themeMode: ThemeMode;
-  isDark: boolean;
-  toggleTheme: () => void;
-  setThemeMode: (mode: ThemeMode) => void;
-  colors: ThemeColors;
-}
-
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
-
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [themeMode, setThemeMode] = useState<ThemeMode>('light');
-
-  const toggleTheme = () => {
-    setThemeMode((prev) => (prev === 'light' ? 'dark' : 'light'));
-  };
-
+export function useTheme() {
+  const dispatch = useAppDispatch();
+  const themeMode = useAppSelector((state) => state.theme.themeMode);
   const isDark = themeMode === 'dark';
   const colors = isDark ? darkColors : lightColors;
 
-  return (
-    <ThemeContext.Provider
-      value={{
-        themeMode,
-        isDark,
-        toggleTheme,
-        setThemeMode,
-        colors,
-      }}
-    >
-      {children}
-    </ThemeContext.Provider>
-  );
+  const toggleTheme = () => {
+    dispatch(toggleThemeAction());
+  };
+
+  const setThemeMode = (mode: ThemeMode) => {
+    dispatch(setThemeModeAction(mode));
+  };
+
+  return {
+    themeMode,
+    isDark,
+    toggleTheme,
+    setThemeMode,
+    colors,
+  };
 }
 
-export function useTheme() {
-  const context = useContext(ThemeContext);
-  if (!context) {
-    throw new Error('useTheme must be used within a ThemeProvider');
-  }
-  return context;
+export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  return <>{children}</>;
 }
