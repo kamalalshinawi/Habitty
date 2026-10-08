@@ -11,6 +11,10 @@ import {
   Nunito_700Bold,
   Nunito_800ExtraBold,
 } from '@expo-google-fonts/nunito';
+import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
+
+import { store, persistor } from './src/store';
 import { Colors } from './src/constants/colors';
 import RootNavigator from './src/navigation/RootNavigator';
 import { HabitProvider } from './src/features/habits/context/HabitContext';
@@ -81,13 +85,24 @@ export default function App() {
   }
 
   return (
-    <ThemeProvider>
-      <HabitProvider>
-        <TodoProvider>
-          <MainApp />
-        </TodoProvider>
-      </HabitProvider>
-    </ThemeProvider>
+    <Provider store={store}>
+      <PersistGate
+        loading={
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color={Colors.tint} />
+          </View>
+        }
+        persistor={persistor}
+      >
+        <ThemeProvider>
+          <HabitProvider>
+            <TodoProvider>
+              <MainApp />
+            </TodoProvider>
+          </HabitProvider>
+        </ThemeProvider>
+      </PersistGate>
+    </Provider>
   );
 }
 
