@@ -155,6 +155,9 @@ export const todoSlice = createSlice({
       }
     },
     resetTodos: () => initialState,
+    setTodosState: (state, action: PayloadAction<Todo[]>) => {
+      state.todos = action.payload;
+    },
   },
 });
 
@@ -165,6 +168,7 @@ export const {
   toggleSubtask,
   addSubtask,
   deleteSubtask,
+  setTodosState,
   resetTodos,
 } = todoSlice.actions;
 

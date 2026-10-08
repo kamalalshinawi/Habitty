@@ -47,6 +47,13 @@ export const habitSlice = createSlice({
         }
       });
     },
+    setHabitsState: (
+      state,
+      action: PayloadAction<{ habits: Habit[]; habitDays: Record<string, HabitStatus> }>
+    ) => {
+      state.habits = action.payload.habits;
+      state.habitDays = action.payload.habitDays;
+    },
     resetHabits: () => initialState,
   },
 });
@@ -56,6 +63,7 @@ export const {
   setDayStatus,
   addHabit,
   deleteHabit,
+  setHabitsState,
   resetHabits,
 } = habitSlice.actions;
 

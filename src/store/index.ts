@@ -14,18 +14,20 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import habitReducer from '../features/habits/habitSlice';
 import todoReducer from '../features/todos/todoSlice';
 import themeReducer from '../features/theme/themeSlice';
+import authReducer from '../features/auth/authSlice';
 
 const rootReducer = combineReducers({
   habits: habitReducer,
   todos: todoReducer,
   theme: themeReducer,
+  auth: authReducer,
 });
 
 const persistConfig = {
   key: 'root',
   version: 1,
   storage: AsyncStorage,
-  whitelist: ['habits', 'todos', 'theme'],
+  whitelist: ['habits', 'todos', 'theme', 'auth'],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
