@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
-import { ActivityIndicator, Platform, StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { NavigationBar } from 'expo-navigation-bar';
+import * as ExpoSplashScreen from 'expo-splash-screen';
 import {
   useFonts,
   Nunito_400Regular,
@@ -20,6 +21,10 @@ import RootNavigator from './src/navigation/RootNavigator';
 import { HabitProvider } from './src/features/habits/context/HabitContext';
 import { TodoProvider } from './src/features/todos/context/TodoContext';
 import { ThemeProvider, useTheme } from './src/context/ThemeContext';
+import SplashScreen from './src/components/ui/SplashScreen';
+
+// Keep native splash screen visible while fonts and assets load
+ExpoSplashScreen.preventAutoHideAsync().catch(() => {});
 
 function MainApp() {
   const { colors, isDark } = useTheme();
@@ -76,22 +81,20 @@ export default function App() {
     Nunito_800ExtraBold,
   });
 
+  useEffect(() => {
+    if (fontsLoaded) {
+      ExpoSplashScreen.hideAsync().catch(() => {});
+    }
+  }, [fontsLoaded]);
+
   if (!fontsLoaded) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={Colors.tint} />
-      </View>
-    );
+    return null;
   }
 
   return (
     <Provider store={store}>
       <PersistGate
-        loading={
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color={Colors.tint} />
-          </View>
-        }
+        loading={<SplashScreen message="Loading your preferences..." />}
         persistor={persistor}
       >
         <ThemeProvider>
