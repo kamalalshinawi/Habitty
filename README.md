@@ -1,4 +1,4 @@
-# Habi (Habitty) 🎯
+# (Habitty) 🎯
 
 > A modern, elegant habit tracker and to-do productivity application built with **React Native 0.86**, **Expo SDK 57**, and **TypeScript**.
 
